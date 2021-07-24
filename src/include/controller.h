@@ -28,9 +28,30 @@
 
 	class Process::Agent::Controller {
 	private:
-		static std::mutex guard;
+		static std::recursive_mutex guard;
 
 		Controller();
+
+		/// @brief A single process on the list
+		class Entry {
+		private:
+			pid_t pid;
+
+		public:
+			constexpr Entry(pid_t p) : pid(p) {
+			}
+
+			constexpr bool operator==(const pid_t pid) const {
+				return this->pid == pid;
+			}
+
+
+		};
+
+		/// @brief Current processes.
+		std::list<Entry> entries;
+
+		/// @brief Get process.
 
 		/// @brief Netlink socket
 		int sock = -1;

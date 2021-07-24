@@ -68,13 +68,12 @@
 
  namespace Udjat {
 
-	std::mutex Process::Agent::Controller::guard;
+	std::recursive_mutex Process::Agent::Controller::guard;
 
 	Process::Agent::Controller::Controller() {
 		cout << "Process controller is starting" << endl;
 
 		// Watch kernel process list.
-
 		// Create an endpoint for communication. Use the kernel user
 		// interface device (PF_NETLINK) which is a datagram oriented
 		// service (SOCK_DGRAM). The protocol used is the connector
@@ -304,18 +303,18 @@
 	}
 
 	Process::Agent::Controller & Process::Agent::Controller::getInstance() {
-		lock_guard<mutex> lock(guard);
+		lock_guard<recursive_mutex> lock(guard);
 		static Controller instance;
 		return instance;
 	}
 
 	void Process::Agent::Controller::insert(Process::Agent *agent) {
-		lock_guard<mutex> lock(guard);
+		lock_guard<recursive_mutex> lock(guard);
 		agents.push_back(agent);
 	}
 
 	void Process::Agent::Controller::remove(Process::Agent *agent) {
-		lock_guard<mutex> lock(guard);
+		lock_guard<recursive_mutex> lock(guard);
 		agents.remove_if([agent](Agent *a) {
 			return a == agent;
 		});
@@ -325,9 +324,8 @@
 
 		try {
 
-			lock_guard<mutex> lock(guard);
-
-
+			lock_guard<recursive_mutex> lock(guard);
+			entries.emplace_back(pid);
 
 		} catch(const exception &e) {
 
@@ -341,8 +339,11 @@
 
 		try {
 
-			lock_guard<mutex> lock(guard);
+			lock_guard<recursive_mutex> lock(guard);
 
+			entries.remove_if([pid](Entry &e) {
+				return e == pid;
+			});
 
 
 		} catch(const exception &e) {
@@ -354,7 +355,7 @@
 	}
 
 	void Process::Agent::Controller::onTimer() {
-		lock_guard<mutex> lock(guard);
+		lock_guard<recursive_mutex> lock(guard);
 
 
 	}
