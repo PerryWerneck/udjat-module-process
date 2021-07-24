@@ -41,6 +41,9 @@
 		/// @brief timer call.
 		void onTimer();
 
+		void insert(const pid_t pid) noexcept;
+		void remove(const pid_t pid) noexcept;
+
 	public:
 
 		static Controller & getInstance();

@@ -138,8 +138,6 @@
 				}
 
 				MainLoop::getInstance().insert(this,sock,MainLoop::oninput,[this](const MainLoop::Event &event) {
-					lock_guard<mutex> lock(guard);
-
 					//
 					// Process kernel event
 					//
@@ -188,52 +186,68 @@
 						#pragma GCC diagnostic push
 						#pragma GCC diagnostic ignored "-Wswitch"
 						switch(ev->what) {
-						case proc_event::PROC_EVENT_FORK:
-							break;
-
 						case proc_event::PROC_EVENT_EXEC:
 #ifdef DEBUG
 							cout << "Process '" << ((pid_t) ev->event_data.exec.process_pid) << "' starts" << endl;
 #endif // DEBUG
-							//insert((pid_t) ev->event_data.exec.process_pid, true);
+							insert((pid_t) ev->event_data.exec.process_pid);
 							break;
 
 						case proc_event::PROC_EVENT_EXIT:
 #ifdef DEBUG
 							cout << "Process '" << ((pid_t) ev->event_data.exec.process_pid) << "' ends" << endl;
 #endif // DEBUG
-							// remove((pid_t) ev->event_data.exec.process_pid);
+							remove((pid_t) ev->event_data.exec.process_pid);
 							break;
-
-			/*
-						case proc_event::PROC_EVENT_UID:
-						case proc_event::PROC_EVENT_NONE:
-						case proc_event::PROC_EVENT_GID:
-						case proc_event::PROC_EVENT_SID:
-							break;
-			*/
-
-			/*
-
-#ifdef PROC_EVENT_COMM
-						case proc_event::PROC_EVENT_COMM:
-							break;
-#endif // PROC_EVENT_COMM
-			*/
 
 #ifdef HAVE_PROC_EVENT_PTRACE
 						// http://lists.openwall.net/netdev/2011/07/12/105
 						case proc_event::PROC_EVENT_PTRACE:
-//							trace(ev->event_data.id.process_pid,ev->event_data.ptrace.tracer_pid);
+							cout << "Ptrace detected on PID " << ev->event_data.id.process_pid << endl;
 							break;
 #endif // HAVE_PROC_EVENT_PTRACE
 
 #ifdef HAVE_PROC_EVENT_COREDUMP
 						case proc_event::PROC_EVENT_COREDUMP:
-//							warning("Coredump detected on PID %u", (unsigned int) ev->event_data.id.process_pid);
-//							fireEvent(onCoreDump, (pid_t) ev->event_data.id.process_pid);
+							cout << "Coredump detected on PID " << ev->event_data.id.process_pid << endl;
 							break;
 #endif // HAVE_PROC_EVENT_COREDUMP
+
+			/*
+						case proc_event::PROC_EVENT_FORK:
+							printf("fork: parent tid=%d pid=%d -> child tid=%d pid=%d\n",
+								nlcn_msg.proc_ev.event_data.fork.parent_pid,
+								nlcn_msg.proc_ev.event_data.fork.parent_tgid,
+								nlcn_msg.proc_ev.event_data.fork.child_pid,
+								nlcn_msg.proc_ev.event_data.fork.child_tgid);
+							break;
+
+						case proc_event::PROC_EVENT_UID:	// UID change
+							printf("uid change: tid=%d pid=%d from %d to %d\n",
+								nlcn_msg.proc_ev.event_data.id.process_pid,
+								nlcn_msg.proc_ev.event_data.id.process_tgid,
+								nlcn_msg.proc_ev.event_data.id.r.ruid,
+								nlcn_msg.proc_ev.event_data.id.e.euid);
+                        	break;
+
+						case proc_event::PROC_EVENT_NONE:
+							break;
+
+						case proc_event::PROC_EVENT_GID:	// GID change
+							printf("gid change: tid=%d pid=%d from %d to %d\n",
+								nlcn_msg.proc_ev.event_data.id.process_pid,
+								nlcn_msg.proc_ev.event_data.id.process_tgid,
+								nlcn_msg.proc_ev.event_data.id.r.rgid,
+								nlcn_msg.proc_ev.event_data.id.e.egid);
+							break;
+
+						case proc_event::PROC_EVENT_SID:
+						break;
+
+						case proc_event::PROC_EVENT_COMM:
+							break;
+
+			*/
 						}
 						#pragma GCC diagnostic pop
 
@@ -246,6 +260,8 @@
 
 					return true;
 				});
+
+				cout << "Process watcher is active" << endl;
 
 			} catch(const exception &e) {
 
@@ -303,6 +319,38 @@
 		agents.remove_if([agent](Agent *a) {
 			return a == agent;
 		});
+	}
+
+	void Process::Agent::Controller::Controller::insert(pid_t pid) noexcept {
+
+		try {
+
+			lock_guard<mutex> lock(guard);
+
+
+
+		} catch(const exception &e) {
+
+			cerr << "Error '" << e.what() << "' inserting pid " << pid << endl;
+
+		}
+
+	}
+
+	void Process::Agent::Controller::Controller::remove(pid_t pid) noexcept {
+
+		try {
+
+			lock_guard<mutex> lock(guard);
+
+
+
+		} catch(const exception &e) {
+
+			cerr << "Error '" << e.what() << "' inserting pid " << pid << endl;
+
+		}
+
 	}
 
 	void Process::Agent::Controller::onTimer() {
