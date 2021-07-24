@@ -29,9 +29,13 @@
 	namespace Process {
 
  		class UDJAT_API Agent : public Udjat::Abstract::Agent {
+		public:
+			class Information;
+
 		private:
+
 			class Controller;
-			friend class Controller;
+			Information *info = nullptr;
 
 		protected:
 			Agent();

@@ -26,30 +26,42 @@
 
  namespace Udjat {
 
+	/// @brief A single process on the list
+	class Process::Agent::Information {
+	private:
+		pid_t pid;
+
+	public:
+		constexpr Information(pid_t p) : pid(p) {
+		}
+
+		constexpr bool operator==(const pid_t pid) const {
+			return this->pid == pid;
+		}
+
+		constexpr bool operator==(const Information &entry) const {
+			return this->pid == entry.pid;
+		}
+
+		operator pid_t() const {
+			return this->pid;
+		}
+	};;
+
 	class Process::Agent::Controller {
 	private:
 		static std::recursive_mutex guard;
 
 		Controller();
 
-		/// @brief A single process on the list
-		class Entry {
-		private:
-			pid_t pid;
+		/// @brief Get pid list.
+		static void load(std::list<pid_t> &pids);
 
-		public:
-			constexpr Entry(pid_t p) : pid(p) {
-			}
-
-			constexpr bool operator==(const pid_t pid) const {
-				return this->pid == pid;
-			}
-
-
-		};
+		/// @brief Update process list.
+		void reload() noexcept;
 
 		/// @brief Current processes.
-		std::list<Entry> entries;
+		std::list<Information> entries;
 
 		/// @brief Get process.
 
@@ -58,9 +70,6 @@
 
 		/// @brief List of process agents.
 		std::list<Agent *> agents;
-
-		/// @brief timer call.
-		void onTimer();
 
 		void insert(const pid_t pid) noexcept;
 		void remove(const pid_t pid) noexcept;

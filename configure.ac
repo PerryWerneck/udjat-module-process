@@ -180,6 +180,6 @@ dnl ---------------------------------------------------------------------------
 AC_SUBST(BASEDIR,$ac_pwd)
 AC_SUBST(LIBS)
 
-dnl AC_CONFIG_FILES(Makefile)
+AC_CONFIG_FILES(Makefile)
 AC_OUTPUT
 

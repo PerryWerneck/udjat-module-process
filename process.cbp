@@ -3,6 +3,7 @@
 	<FileVersion major="1" minor="6" />
 	<Project>
 		<Option title="Udjat process module" />
+		<Option makefile_is_custom="1" />
 		<Option pch_mode="2" />
 		<Option compiler="gcc" />
 		<Build>
@@ -42,6 +43,8 @@
 		<Unit filename="src/include/udjat/process/agent.h" />
 		<Unit filename="src/module/agent.cc" />
 		<Unit filename="src/module/controller/controller.cc" />
+		<Unit filename="src/module/controller/init.cc" />
+		<Unit filename="src/module/controller/load.cc" />
 		<Unit filename="src/testprogram/testprogram.cc" />
 		<Extensions />
 	</Project>
