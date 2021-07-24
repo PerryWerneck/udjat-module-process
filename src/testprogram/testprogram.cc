@@ -17,40 +17,34 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
- #pragma once
-
- #include <udjat/defs.h>
+ #include <udjat.h>
+ #include <udjat/module.h>
+ #include <udjat/factory.h>
  #include <udjat/process/agent.h>
- #include <mutex>
- #include <list>
+ #include <unistd.h>
+ #include <iostream>
 
- namespace Udjat {
+ using namespace std;
+ using namespace Udjat;
 
-	class Process::Agent::Controller {
-	private:
-		static std::mutex guard;
-
-		Controller();
-
-		/// @brief Netlink socket
-		int sock = -1;
-
-		/// @brief List of process agents.
-		std::list<Agent *> agents;
-
-		/// @brief timer call.
-		void onTimer();
-
-	public:
-
-		static Controller & getInstance();
-		~Controller();
-
-		void insert(Agent *agent);
-		void remove(Agent *agent);
-
-	};
-
- }
+ class SampleAgent : public Process::Agent {
+ public:
+ 	SampleAgent() : Udjat::Process::Agent() {
+ 	}
 
 
+ };
+
+ int main(int argc, char **argv) {
+
+	setlocale( LC_ALL, "" );
+
+	Logger::redirect(nullptr,true);
+
+	SampleAgent agent;
+
+	Udjat::run();
+
+
+	return 0;
+}

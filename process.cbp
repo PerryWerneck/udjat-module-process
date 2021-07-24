@@ -13,6 +13,7 @@
 				<Option compiler="gcc" />
 				<Compiler>
 					<Add option="-g" />
+					<Add option="-DDEBUG=1" />
 				</Compiler>
 			</Target>
 			<Target title="Release">
@@ -22,6 +23,7 @@
 				<Option compiler="gcc" />
 				<Compiler>
 					<Add option="-O2" />
+					<Add option="-DNDEBUG=1" />
 				</Compiler>
 				<Linker>
 					<Add option="-s" />
@@ -32,10 +34,15 @@
 			<Add option="-Wall" />
 			<Add directory="src/include" />
 		</Compiler>
+		<Linker>
+			<Add library="udjat" />
+			<Add library="pugixml" />
+		</Linker>
 		<Unit filename="src/include/controller.h" />
 		<Unit filename="src/include/udjat/process/agent.h" />
 		<Unit filename="src/module/agent.cc" />
 		<Unit filename="src/module/controller/controller.cc" />
+		<Unit filename="src/testprogram/testprogram.cc" />
 		<Extensions />
 	</Project>
 </CodeBlocks_project_file>
