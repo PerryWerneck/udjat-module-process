@@ -46,6 +46,9 @@
 		operator pid_t() const {
 			return this->pid;
 		}
+
+		std::string exename() const;
+
 	};;
 
 	class Process::Agent::Controller {

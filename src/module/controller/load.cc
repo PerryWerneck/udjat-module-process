@@ -64,7 +64,7 @@
 
 	}
 
-	static bool exists(const std::list<pid_t> &entries, const Process::Agent::Information &pid) {
+	static bool search(const std::list<pid_t> &entries, const Process::Agent::Information &pid) {
 
 		for(auto e = entries.begin(); e != entries.end(); e++) {
 			if(*e == pid)
@@ -74,7 +74,7 @@
 		return false;
 	}
 
-	static bool exists(const std::list<Process::Agent::Information> &entries, const pid_t pid) {
+	static bool search(const std::list<Process::Agent::Information> &entries, const pid_t pid) {
 
 		for(auto e = entries.begin(); e != entries.end(); e++) {
 			if(*e == pid)
@@ -98,12 +98,12 @@
 
 				// Remove finished processes.
 				this->entries.remove_if([current](Agent::Information &entry){
-					return !exists(current,entry);
+					return !search(current,entry);
 				});
 
 				// Remove already registered entries.
 				current.remove_if([this](pid_t &entry){
-					return exists(this->entries,entry);
+					return search(this->entries,entry);
 				});
 
 				if(!current.empty()) {
@@ -111,6 +111,9 @@
 					// Add new processes to active list.
 					//this->entries.splice(this->entries.end(),current,current.begin(),current.end());
 					for(auto ix = current.begin(); ix != current.end(); ix++) {
+#ifdef DEBUG
+						cout << "Adding process " << *ix << " - " << Agent::Information(*ix).exename() << endl;
+#endif // DEBUG
 						this->entries.emplace_back(*ix);
 					}
 

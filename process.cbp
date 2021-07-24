@@ -45,6 +45,7 @@
 		<Unit filename="src/module/controller/controller.cc" />
 		<Unit filename="src/module/controller/init.cc" />
 		<Unit filename="src/module/controller/load.cc" />
+		<Unit filename="src/module/information.cc" />
 		<Unit filename="src/testprogram/testprogram.cc" />
 		<Extensions />
 	</Project>

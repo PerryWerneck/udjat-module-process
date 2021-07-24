@@ -17,40 +17,30 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
- #pragma once
+ #include <controller.h>
+ #include <unistd.h>
+ #include <string>
 
- #include <udjat/defs.h>
- #include <udjat/factory.h>
- #include <udjat/agent.h>
- #include <udjat/state.h>
+ using namespace std;
 
  namespace Udjat {
 
-	namespace Process {
+	std::string Process::Agent::Information::exename() const {
 
- 		class UDJAT_API Agent : public Udjat::Abstract::Agent {
-		public:
-			class Information;
+		string pathname{"/proc/"};
+		pathname += std::to_string((unsigned int) pid) + "/exe";
 
-		private:
+		char name[4096];
 
-			class Controller;
-			const Information *info = nullptr;
+		ssize_t sz = readlink(pathname.c_str(), name, 4095);
+		if(sz > 0) {
+			name[sz] = 0;
+		} else {
+			cerr << "Error '" << strerror(errno) << "' getting exename for pid " << pid << endl;
+			return string{"pid"} + std::to_string((unsigned int) pid);
+		}
 
-		protected:
-			Agent();
-
-		public:
-
-			class Factory : public Udjat::Factory {
-			public:
-				Factory();
-				void parse(Abstract::Agent &parent, const pugi::xml_node &node) const override;
-			};
-
-			virtual ~Agent();
-
- 		};
+		return name;
 
 	}
 
