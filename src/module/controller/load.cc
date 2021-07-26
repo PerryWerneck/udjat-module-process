@@ -111,10 +111,7 @@
 					// Add new processes to active list.
 					//this->entries.splice(this->entries.end(),current,current.begin(),current.end());
 					for(auto ix = current.begin(); ix != current.end(); ix++) {
-#ifdef DEBUG
-						cout << "Adding process " << *ix << " - " << Agent::Information(*ix).exename() << endl;
-#endif // DEBUG
-						this->entries.emplace_back(*ix);
+						insert(*ix);
 					}
 
 				}

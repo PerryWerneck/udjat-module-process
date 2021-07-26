@@ -20,6 +20,7 @@
  #include <udjat.h>
  #include <udjat/module.h>
  #include <udjat/factory.h>
+ #include <controller.h>
  #include <udjat/process/agent.h>
  #include <unistd.h>
  #include <iostream>
@@ -30,6 +31,13 @@
  class SampleAgent : public Process::Agent {
  public:
  	SampleAgent() : Udjat::Process::Agent() {
+
+ 		Information info(getpid());
+
+ 		info.refresh();
+ 		cout << "Exename: '" << info.exename() << "'" << endl;
+
+
  	}
 
 
@@ -44,7 +52,6 @@
 	SampleAgent agent;
 
 	Udjat::run();
-
 
 	return 0;
 }

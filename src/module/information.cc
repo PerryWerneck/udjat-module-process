@@ -20,10 +20,17 @@
  #include <controller.h>
  #include <unistd.h>
  #include <string>
+ #include <sys/types.h>
+ #include <sys/stat.h>
+ #include <fcntl.h>
 
  using namespace std;
 
  namespace Udjat {
+
+	Process::Agent::Information::~Information() {
+		set(Agent::STATE_DEAD);
+	}
 
 	std::string Process::Agent::Information::exename() const {
 
@@ -41,6 +48,22 @@
 		}
 
 		return name;
+
+	}
+
+	void Process::Agent::Information::reset() {
+
+		set(Agent::STATE_UNDEFINED);
+
+	}
+
+	void Process::Agent::Information::set(const Agent::State state) {
+
+		if(state == this->state)
+			return;
+
+		// State has changed.
+
 
 	}
 

@@ -31,6 +31,25 @@
  		class UDJAT_API Agent : public Udjat::Abstract::Agent {
 		public:
 			class Information;
+			friend class Information;
+
+			/// @brief Agent state.
+			enum State : uint8_t {
+				STATE_RUNNING		= 'R',	///< @brief Running.
+				STATE_SLEEPING		= 'S',	///< @brief Sleeping in an interruptible wait.
+				STATE_WAITING		= 'D',	///< @brief Waiting in uninterruptible disk sleep.
+				STATE_ZOMBIE		= 'Z',	///< @brief Zombie.
+				STATE_STOPPED		= 'T',	///< @brief Stopped (on a signal) or (before Linux 2.6.33) trace stopped.
+				STATE_TRACING_STOP	= 't',	///< @brief Tracing stop (Linux 2.6.33 onward).
+				STATE_PAGING		= 'W',	///< @brief Paging (only before Linux 2.6.0).
+				STATE_DEAD			= 'X',	///< @brief Dead (from Linux 2.6.0 onward).
+				STATE_DEAD_COMPAT	= 'x',	///< @brief Dead (Linux 2.6.33 to 3.13 only).
+				STATE_WAKE_KILL		= 'K',	///< @brief Wakekill (Linux 2.6.33 to 3.13 only).
+				STATE_WAKING		= 'W',	///< @brief Waking (Linux 2.6.33 to 3.13 only).
+				STATE_PARKED		= 'P',	///< @brief Parked (Linux 3.9 to 3.13 only).
+
+				STATE_UNDEFINED		= 0		///< @brief Undefined.
+			};
 
 		private:
 

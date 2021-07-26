@@ -283,21 +283,26 @@
 
 		// Starting data colecting timer.
 		MainLoop::getInstance().insert(this,1000,[this](){
-			try {
+			if(sock < 0) {
 
-				if(sock < 0) {
+				// No kernel watcher, update from /proc.
+				try {
+
 					reload();
+
+				} catch(const exception &e) {
+
+					cerr << "Error '" << e.what() << "' updating process list" << endl;
+
+				} catch(...) {
+
+					cerr << "Unexpected errror updating process list" << endl;
+
 				}
 
-			} catch(const exception &e) {
-
-				cerr << "Error '" << e.what() << "' updating process list" << endl;
-
-			} catch(...) {
-
-				cerr << "Unexpected errror updating process list" << endl;
-
 			}
+
+			refresh();
 
 			return true;
 		});

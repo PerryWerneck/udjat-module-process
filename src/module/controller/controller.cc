@@ -65,10 +65,16 @@
 
 	void Process::Agent::Controller::Controller::insert(pid_t pid) noexcept {
 
+		lock_guard<recursive_mutex> lock(guard);
+
 		try {
 
-			lock_guard<recursive_mutex> lock(guard);
-			entries.emplace_back(pid);
+			auto element = entries.emplace_back(pid);
+			element.refresh();
+
+#ifdef DEBUG
+			cout << "Adding process " << pid << " - " << element.exename() << endl;
+#endif // DEBUG
 
 		} catch(const exception &e) {
 
