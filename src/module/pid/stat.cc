@@ -255,7 +255,7 @@
 
  namespace Udjat {
 
-	Process::Stat::Stat(pid_t pid) {
+	Process::Identifier::Stat::Stat(pid_t pid) {
 
 		// http://stackoverflow.com/questions/16011677/calculating-cpu-usage-using-proc-files
 		// https://github.com/mmcilroy/cpu_usage

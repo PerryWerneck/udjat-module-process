@@ -39,6 +39,7 @@
  #include <iostream>
  #include <unistd.h>
  #include <udjat/tools/mainloop.h>
+ #include <udjat/tools/threadpool.h>
 
  #include <sys/socket.h>
  #include <sys/types.h>
@@ -69,6 +70,7 @@
  namespace Udjat {
 
 	Process::Agent::Controller::Controller() {
+
 		cout << "Process controller is starting" << endl;
 
 		// Load pids
@@ -302,7 +304,9 @@
 
 			}
 
-			refresh();
+			ThreadPool::getInstance().push([this]() {
+				refresh();
+			});
 
 			return true;
 		});

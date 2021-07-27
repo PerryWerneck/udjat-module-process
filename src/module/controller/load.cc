@@ -64,7 +64,7 @@
 
 	}
 
-	static bool search(const std::list<pid_t> &entries, const Process::Agent::Information &pid) {
+	static bool search(const std::list<pid_t> &entries, const Process::Identifier &pid) {
 
 		for(auto e = entries.begin(); e != entries.end(); e++) {
 			if(*e == pid)
@@ -74,7 +74,7 @@
 		return false;
 	}
 
-	static bool search(const std::list<Process::Agent::Information> &entries, const pid_t pid) {
+	static bool search(const std::list<Process::Identifier> &entries, const pid_t pid) {
 
 		for(auto e = entries.begin(); e != entries.end(); e++) {
 			if(*e == pid)
@@ -97,7 +97,7 @@
 				lock_guard<recursive_mutex> lock(guard);
 
 				// Remove finished processes.
-				this->entries.remove_if([current](Agent::Information &entry){
+				this->entries.remove_if([current](Identifier &entry){
 					return !search(current,entry);
 				});
 

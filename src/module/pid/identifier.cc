@@ -28,11 +28,11 @@
 
  namespace Udjat {
 
-	Process::Agent::Information::~Information() {
-		set(Agent::STATE_DEAD);
+	Process::Identifier::~Identifier() {
+		set(STATE_DEAD);
 	}
 
-	std::string Process::Agent::Information::exename() const {
+	std::string Process::Identifier::exename() const {
 
 		string pathname{"/proc/"};
 		pathname += std::to_string((unsigned int) pid) + "/exe";
@@ -51,13 +51,13 @@
 
 	}
 
-	void Process::Agent::Information::reset() {
+	void Process::Identifier::reset() {
 
-		set(Agent::STATE_UNDEFINED);
+		set(STATE_UNDEFINED);
 
 	}
 
-	void Process::Agent::Information::set(const Agent::State state) {
+	void Process::Identifier::set(const State state) {
 
 		if(state == this->state)
 			return;

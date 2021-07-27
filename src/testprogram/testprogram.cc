@@ -30,17 +30,11 @@
 
  class SampleAgent : public Process::Agent {
  public:
- 	SampleAgent() : Udjat::Process::Agent() {
-
- 		Information info(getpid());
-
- 		info.refresh();
+ 	SampleAgent() : Process::Agent() {
+ 		Process::Identifier info(getpid());
+		info.refresh();
  		cout << "Exename: '" << info.exename() << "'" << endl;
-
-
- 	}
-
-
+	}
  };
 
  int main(int argc, char **argv) {
@@ -49,7 +43,7 @@
 
 	Logger::redirect(nullptr,true);
 
-	SampleAgent agent;
+	SampleAgent(agent);
 
 	Udjat::run();
 

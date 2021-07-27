@@ -28,15 +28,15 @@
 
  namespace Udjat {
 
-	Process::Stat Process::Agent::Information::refresh() {
+	Process::Identifier::Stat Process::Identifier::refresh() {
 
 		try {
 
 			// Read /proc/pid/stat.
-			Process::Stat pidstat(pid);
+			Stat pidstat(pid);
 
 			// Set process state.
-			set((Agent::State) pidstat.state);
+			set((State) pidstat.state);
 
 			return pidstat;
 
@@ -55,11 +55,11 @@
 
 		struct Entry {
 
-			Information &info;
-			Stat stats;
+			Identifier &info;
+			Identifier::Stat stats;
 			unsigned long long time;
 
-			Entry(Information &i) : info(i), stats(i.refresh()) {
+			Entry(Identifier &i) : info(i), stats(i.refresh()) {
 			}
 
 		};
@@ -67,6 +67,11 @@
 		list<Entry> stats;
 
 		try {
+
+			//
+			// Get total CPU usage.
+			//
+			Process::Stat stat;
 
 			//
 			// Get CPU usage by pid.
@@ -86,10 +91,6 @@
 			}
 
 			cout << "Total time=" << totaltime << endl;
-
-			//
-			// Get total CPU USE
-			//
 
 
 		} catch(const exception &e) {

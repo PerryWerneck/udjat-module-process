@@ -90,7 +90,7 @@
 
 			lock_guard<recursive_mutex> lock(guard);
 
-			entries.remove_if([pid](Information &e) {
+			entries.remove_if([pid](Identifier &e) {
 				return e == pid;
 			});
 
@@ -102,18 +102,6 @@
 		}
 
 	}
-
-	/*
-	bool Process::Agent::Controller::exists(const std::list<Entry> &entries, const Entry &entry) {
-
-		for(auto e = entries.begin(); e != entries.end(); e++) {
-			if(*e == entry)
-				return true;
-		}
-
-		return false;
-	}
-	*/
 
 
  }
