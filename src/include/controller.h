@@ -57,6 +57,13 @@
 			void insert(const pid_t pid) noexcept;
 			void remove(const pid_t pid) noexcept;
 
+			/// @brief System stats on last passage.
+			struct {
+				float cpu;	///< @brief System CPU usage.
+				unsigned long running = 0;
+				unsigned long idle = 0;
+			} system;
+
 		public:
 
 			static Controller & getInstance();

@@ -71,7 +71,24 @@
 			//
 			// Get total CPU usage.
 			//
+			float sysusage = 0;
+
 			Process::Stat stat;
+
+			if(system.running || system.idle) {
+
+				float running = (float) (stat.getRunning() - system.running);
+				float idle = (float) (stat.getIdle() - system.idle);
+				sysusage = this->system.cpu = (running / (running+idle));
+
+			}
+
+			system.running = stat.getRunning();
+			system.idle = stat.getIdle();
+
+#ifdef DEBUG
+			cout << "Total CPU usage: " << (sysusage*100) << "%" << endl;
+#endif // DEBUG
 
 			//
 			// Get CPU usage by pid.

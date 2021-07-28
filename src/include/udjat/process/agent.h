@@ -43,6 +43,15 @@
 			unsigned long guest_nice = 0;
 
 			Stat();
+
+			inline unsigned long getRunning() const noexcept {
+				return user+nice+system+iowait+irq+softirq+steal+guest+guest_nice;
+			}
+
+			inline unsigned long getIdle() const noexcept {
+				return idle;
+			}
+
 		};
 
 		/// @brief Process identifier.

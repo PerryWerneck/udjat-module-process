@@ -310,6 +310,14 @@
 
 			return true;
 		});
+
+		// Load system usage.
+		{
+			Process::Stat stat;
+			system.running = stat.getRunning();
+			system.idle = stat.getIdle();
+		}
+
 	}
 
 	Process::Agent::Controller::~Controller() {
