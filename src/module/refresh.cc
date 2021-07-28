@@ -60,7 +60,7 @@
 			//
 			float sysusage = 0;
 
-			Process::Stat stat;
+			CPU::Stat stat;
 
 			if(system.running || system.idle) {
 

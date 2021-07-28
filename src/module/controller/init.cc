@@ -302,7 +302,7 @@
 
 				} catch(...) {
 
-					cerr << "Unexpected errror updating process list" << endl;
+					cerr << "Unexpected error updating process list" << endl;
 
 				}
 
@@ -313,11 +313,12 @@
 			});
 
 			return true;
+
 		});
 
 		// Load system usage.
 		{
-			Process::Stat stat;
+			CPU::Stat stat;
 			system.running = stat.getRunning();
 			system.idle = stat.getIdle();
 		}

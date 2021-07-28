@@ -26,7 +26,7 @@
 
  namespace Udjat {
 
-	namespace Process {
+	namespace CPU {
 
 		/// @brief System Statistics (/proc/stat)
 		struct UDJAT_API Stat {
@@ -53,6 +53,10 @@
 			}
 
 		};
+
+	}
+
+	namespace Process {
 
 		/// @brief Process identifier.
 		class Identifier;
