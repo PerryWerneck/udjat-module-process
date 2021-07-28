@@ -284,6 +284,9 @@
 
 		}
 
+		// Get options.
+		update.cpu_use_per_process = Config::Value<bool>("cpu","get-by-pid",true);
+
 		// Starting data colecting timer.
 		MainLoop::getInstance().insert(this,Config::Value<unsigned long>("cpu","update-timer",5000).get(),[this](){
 			if(sock < 0) {

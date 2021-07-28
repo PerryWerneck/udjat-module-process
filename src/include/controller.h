@@ -34,6 +34,11 @@
 
 			Controller();
 
+			struct {
+				/// @brief Update process CPU use.
+				bool cpu_use_per_process = true;
+			} update;
+
 			/// @brief Get pid list.
 			static void load(std::list<pid_t> &pids);
 

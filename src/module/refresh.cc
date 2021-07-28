@@ -53,21 +53,6 @@
 
 		lock_guard<recursive_mutex> lock(guard);
 
-		/*
-		struct Entry {
-
-			Identifier &info;
-			Identifier::Stat stats;
-			unsigned long long time;
-
-			Entry(Identifier &i) : info(i), stats(i.refresh()) {
-			}
-
-		};
-
-		list<Entry> stats;
-		*/
-
 		try {
 
 			//
@@ -92,10 +77,12 @@
 			cout << "Total CPU usage: " << (sysusage*100) << "%" << endl;
 #endif // DEBUG
 
-			//
-			// Get CPU usage by pid.
-			//
-			{
+			if (update.cpu_use_per_process) {
+
+				//
+				// Get CPU usage by pid.
+				//
+
 				struct Entry {
 
 					Identifier &info;
