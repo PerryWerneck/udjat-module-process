@@ -40,6 +40,7 @@
  #include <unistd.h>
  #include <udjat/tools/mainloop.h>
  #include <udjat/tools/threadpool.h>
+ #include <udjat/tools/configuration.h>
 
  #include <sys/socket.h>
  #include <sys/types.h>
@@ -284,7 +285,7 @@
 		}
 
 		// Starting data colecting timer.
-		MainLoop::getInstance().insert(this,1000,[this](){
+		MainLoop::getInstance().insert(this,Config::Value<unsigned long>("cpu","update-timer",5000).get(),[this](){
 			if(sock < 0) {
 
 				// No kernel watcher, update from /proc.

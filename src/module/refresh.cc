@@ -53,6 +53,7 @@
 
 		lock_guard<recursive_mutex> lock(guard);
 
+		/*
 		struct Entry {
 
 			Identifier &info;
@@ -65,6 +66,7 @@
 		};
 
 		list<Entry> stats;
+		*/
 
 		try {
 
@@ -93,22 +95,52 @@
 			//
 			// Get CPU usage by pid.
 			//
-			unsigned long long totaltime = 0;
+			{
+				struct Entry {
 
-			for(auto ix = entries.begin(); ix != entries.end(); ix++) {
-				auto entry = stats.emplace_back(*ix);
+					Identifier &info;
+					float usage;
 
-				unsigned long long t = (entry.stats.utime + entry.stats.stime);
+					Entry(Identifier &i, float u) : info(i), usage(u) {
+					}
 
-				if(entry.info.last.time && t > entry.info.last.time) {
-					entry.time = t - entry.info.last.time;
-					totaltime += entry.time;
+				};
+
+				list<Entry> pids;
+
+				unsigned long long totaltime = 0;
+
+				for(auto ix = entries.begin(); ix != entries.end(); ix++) {
+
+					Identifier::Stat stats(ix->refresh());
+
+					unsigned long long cpu = (stats.utime + stats.stime);
+
+					if(ix->last.cpu && cpu >= ix->last.cpu) {
+						float cpu = (float) (cpu - ix->last.cpu);
+						pids.emplace_back(*ix,cpu);
+					} else {
+						ix->usage.cpu = 0;
+					}
+					ix->last.cpu = cpu;	// Store value for next check.
+
 				}
-				entry.info.last.time = t;
+
+				cout << "Total time=" << totaltime << endl;
+
+				if(sysusage && totaltime) {
+
+					cout << "Updating usage by pid" << endl;
+
+					// sysusage ........... totaltime
+					// info.usage.cpu ..... ix->usage
+
+					for(auto ix = pids.begin(); ix != pids.end(); ix++) {
+						ix->info.usage.cpu = (ix->usage * sysusage) / ((float) totaltime);
+					}
+
+				}
 			}
-
-			cout << "Total time=" << totaltime << endl;
-
 
 		} catch(const exception &e) {
 

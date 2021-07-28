@@ -109,8 +109,13 @@
 
 			/// @brief Saved info.
 			struct {
-				unsigned long long time = 0;
+				unsigned long long cpu = 0;	///< @brief CPU count on last check.
 			} last;
+
+			/// @brief Usage
+			struct {
+				float cpu = 0;	/// < @brief CPU use for this process.
+			} usage;
 
 			/// @brief Current state
 			State state = STATE_UNDEFINED;
