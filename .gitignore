@@ -50,6 +50,7 @@ stamp-h1
 .bin
 .obj
 *.bak
+*.cscope_file_list
 
 Makefile
 valgrind.suppression
