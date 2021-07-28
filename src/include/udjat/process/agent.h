@@ -26,7 +26,7 @@
 
  namespace Udjat {
 
-	namespace CPU {
+	namespace System {
 
 		/// @brief System Statistics (/proc/stat)
 		struct UDJAT_API Stat {
@@ -43,6 +43,10 @@
 			unsigned long guest_nice = 0;
 
 			Stat();
+
+			inline unsigned long getUsage() const noexcept {
+				return user+nice+system+idle+iowait+irq+softirq+steal+guest+guest_nice;
+			}
 
 			inline unsigned long getRunning() const noexcept {
 				return user+nice+system+iowait+irq+softirq+steal+guest+guest_nice;

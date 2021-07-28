@@ -69,7 +69,7 @@
 
 		try {
 
-			auto element = entries.emplace_back(pid);
+			auto element = identifiers.emplace_back(pid);
 			element.refresh();
 
 #ifdef DEBUG
@@ -90,7 +90,7 @@
 
 			lock_guard<recursive_mutex> lock(guard);
 
-			entries.remove_if([pid](Identifier &e) {
+			identifiers.remove_if([pid](Identifier &e) {
 				return e == pid;
 			});
 

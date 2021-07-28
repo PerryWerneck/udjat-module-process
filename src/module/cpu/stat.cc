@@ -33,7 +33,7 @@
 
  namespace Udjat {
 
-	CPU::Stat::Stat() {
+	System::Stat::Stat() {
 
 		char buffer[4096];
 

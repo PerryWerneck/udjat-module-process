@@ -97,13 +97,13 @@
 				lock_guard<recursive_mutex> lock(guard);
 
 				// Remove finished processes.
-				this->entries.remove_if([current](Identifier &entry){
+				this->identifiers.remove_if([current](Identifier &entry){
 					return !search(current,entry);
 				});
 
-				// Remove already registered entries.
+				// Remove already registered identifiers.
 				current.remove_if([this](pid_t &entry){
-					return search(this->entries,entry);
+					return search(this->identifiers,entry);
 				});
 
 				if(!current.empty()) {
@@ -121,7 +121,7 @@
 		} catch(const exception &e) {
 
 			cerr << "Error '" << e.what() << "' loading process list" << endl;
-			entries.clear();
+			identifiers.clear();
 		}
 
 	}

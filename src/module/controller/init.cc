@@ -79,9 +79,8 @@
 			list<pid_t> pids;
 			load(pids);
 
-			entries.clear(); // Just in case
 			for(auto pid : pids) {
-				entries.emplace_back(pid);
+				identifiers.emplace_back(pid);
 			}
 		}
 
@@ -288,7 +287,7 @@
 		update.cpu_use_per_process = Config::Value<bool>("cpu","get-by-pid",true);
 
 		// Starting data colecting timer.
-		MainLoop::getInstance().insert(this,Config::Value<unsigned long>("cpu","update-timer",5000).get(),[this](){
+		MainLoop::getInstance().insert(this,Config::Value<unsigned long>("cpu","update-timer",10000).get(),[this](){
 			if(sock < 0) {
 
 				// No kernel watcher, update from /proc.
@@ -316,9 +315,14 @@
 
 		});
 
+		// Do the first read.
+		ThreadPool::getInstance().push([this]() {
+			refresh();
+		});
+
 		// Load system usage.
 		{
-			CPU::Stat stat;
+			System::Stat stat;
 			system.running = stat.getRunning();
 			system.idle = stat.getIdle();
 		}

@@ -60,7 +60,7 @@
 			//
 			float sysusage = 0;
 
-			CPU::Stat stat;
+			System::Stat stat;
 
 			if(system.running || system.idle) {
 
@@ -97,14 +97,16 @@
 
 				unsigned long long totaltime = 0;
 
-				for(auto ix = entries.begin(); ix != entries.end(); ix++) {
+				for(auto ix = identifiers.begin(); ix != identifiers.end(); ix++) {
 
 					Identifier::Stat stats(ix->refresh());
 
 					unsigned long long cpu = (stats.utime + stats.stime);
 
 					if(ix->last.cpu && cpu >= ix->last.cpu) {
-						float cpu = (float) (cpu - ix->last.cpu);
+						unsigned long long time = (cpu - ix->last.cpu);
+						totaltime += time;
+						float cpu = (float) time;
 						pids.emplace_back(*ix,cpu);
 					} else {
 						ix->usage.cpu = 0;
@@ -113,11 +115,15 @@
 
 				}
 
-				cout << "Total time=" << totaltime << endl;
+#ifdef DEBUG
+				cout << "Total time=" << totaltime << " pids=" << pids.size() << endl;
+#endif // DEBUG
 
 				if(sysusage && totaltime) {
 
+#ifdef DEBUG
 					cout << "Updating usage by pid" << endl;
+#endif // DEBUG
 
 					// sysusage ........... totaltime
 					// info.usage.cpu ..... ix->usage

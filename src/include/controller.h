@@ -45,15 +45,13 @@
 			/// @brief Update process list.
 			void reload() noexcept;
 
-			/// @brief Current processes.
-			std::list<Identifier> entries;
-
-			/// @brief Get process.
-
 			/// @brief Netlink socket
 			int sock = -1;
 
-			/// @brief List of process agents.
+			/// @brief Process identifiers.
+			std::list<Identifier> identifiers;
+
+			/// @brief Active agents.
 			std::list<Agent *> agents;
 
 			/// @brief Update CPU usage.
@@ -62,9 +60,9 @@
 			void insert(const pid_t pid) noexcept;
 			void remove(const pid_t pid) noexcept;
 
-			/// @brief System stats on last passage.
+			/// @brief System stats on last update.
 			struct {
-				float cpu;	///< @brief System CPU usage.
+				float cpu = 0;				///< @brief System CPU usage.
 				unsigned long running = 0;
 				unsigned long idle = 0;
 			} system;
@@ -76,6 +74,10 @@
 
 			void insert(Agent *agent);
 			void remove(Agent *agent);
+
+			inline float getSystemCpuUse() const noexcept {
+				return system.cpu;
+			}
 
 		};
 
