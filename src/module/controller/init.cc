@@ -41,6 +41,7 @@
  #include <udjat/tools/mainloop.h>
  #include <udjat/tools/threadpool.h>
  #include <udjat/tools/configuration.h>
+ #include <udjat/tools/system/stat.h>
 
  #include <sys/socket.h>
  #include <sys/types.h>

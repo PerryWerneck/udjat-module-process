@@ -41,14 +41,14 @@
 		</Linker>
 		<Unit filename="src/include/controller.h" />
 		<Unit filename="src/include/udjat/process/agent.h" />
-		<Unit filename="src/module/agent.cc" />
 		<Unit filename="src/module/controller/controller.cc" />
 		<Unit filename="src/module/controller/init.cc" />
 		<Unit filename="src/module/controller/load.cc" />
+		<Unit filename="src/module/cpu/stat.cc" />
+		<Unit filename="src/module/pid/agent.cc" />
 		<Unit filename="src/module/pid/identifier.cc" />
 		<Unit filename="src/module/pid/stat.cc" />
 		<Unit filename="src/module/refresh.cc" />
-		<Unit filename="src/module/stat.cc" />
 		<Unit filename="src/testprogram/testprogram.cc" />
 		<Extensions />
 	</Project>

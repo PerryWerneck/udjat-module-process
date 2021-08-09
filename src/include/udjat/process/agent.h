@@ -26,40 +26,6 @@
 
  namespace Udjat {
 
-	namespace System {
-
-		/// @brief System Statistics (/proc/stat)
-		struct UDJAT_API Stat {
-
-			unsigned long user = 0;		//< @brief normal processes executing in user mode.
-			unsigned long nice= 0;		//< @brief niced processes executing in user mode.
-			unsigned long system = 0;	//< @brief processes executing in kernel mode.
-			unsigned long idle = 0;		//< @brief twiddling thumbs.
-			unsigned long iowait = 0;	//< @brief waiting for I/O to complete.
-			unsigned long irq = 0;		//< @brief servicing interrupts.
-			unsigned long softirq = 0;	//< @brief servicing softirqs.
-			unsigned long steal = 0;	//< @brief ticks spent executing other virtual hosts (in virtualised environments like Xen).
-			unsigned long guest = 0;
-			unsigned long guest_nice = 0;
-
-			Stat();
-
-			inline unsigned long getUsage() const noexcept {
-				return user+nice+system+idle+iowait+irq+softirq+steal+guest+guest_nice;
-			}
-
-			inline unsigned long getRunning() const noexcept {
-				return user+nice+system+iowait+irq+softirq+steal+guest+guest_nice;
-			}
-
-			inline unsigned long getIdle() const noexcept {
-				return idle;
-			}
-
-		};
-
-	}
-
 	namespace Process {
 
 		/// @brief Process identifier.
@@ -80,7 +46,7 @@
 			class Factory : public Udjat::Factory {
 			public:
 				Factory();
-				void parse(Abstract::Agent &parent, const pugi::xml_node &node) const override;
+				bool parse(Abstract::Agent &parent, const pugi::xml_node &node) const override;
 			};
 
 			virtual ~Agent();
@@ -140,8 +106,8 @@
 
 			~Identifier();
 
-			/// @brief Update from /proc/pid/stat
 			/// @brief Data from /proc/pid/stat.
+			/// https://www.kernel.org/doc/html/latest/filesystems/proc.html
 			struct Stat {
 				char 				state = 0;			///< @brief Process state.
 				int 				ppid = 0;			///< @brief The PID of the parent of this process.
