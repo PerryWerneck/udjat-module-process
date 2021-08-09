@@ -28,6 +28,8 @@
 
  namespace Udjat {
 
+	recursive_mutex Process::Identifier::guard;
+
 	Process::Identifier::~Identifier() {
 		set(STATE_DEAD);
 	}
@@ -54,7 +56,65 @@
 	void Process::Identifier::reset() {
 
 		set(STATE_UNDEFINED);
+		cpu.current = 0;
 
+		{
+			lock_guard<recursive_mutex> lock(guard);
+			for(auto listener : listeners) {
+				listener->setCPU(0);
+			}
+		}
+
+	}
+
+	unsigned long Process::Identifier::refresh() {
+
+		try {
+
+			// Read /proc/pid/stat.
+			Stat stat(pid);
+
+			// Set process state.
+			set((State) stat.state);
+
+			// Update CPU time.
+			unsigned long current = (stat.utime + stat.stime);
+
+			if(cpu.last && current > cpu.last) {
+				cpu.current = (current - cpu.last);
+			} else {
+				cpu.current = 0;
+			}
+
+			if(!cpu.current) {
+				lock_guard<recursive_mutex> lock(guard);
+				for(auto listener : listeners) {
+					listener->setCPU(0);
+				}
+			}
+
+			cpu.last = current;
+
+		} catch(...) {
+
+			reset();
+			throw;
+
+		}
+
+		return cpu.current;
+	}
+
+	void Process::Identifier::refresh(float sysusage) {
+
+		float percent = cpu.current / sysusage;
+
+		{
+			lock_guard<recursive_mutex> lock(guard);
+			for(auto listener : listeners) {
+				listener->setCPU(percent);
+			}
+		}
 	}
 
 	void Process::Identifier::set(const State state) {
@@ -62,8 +122,15 @@
 		if(state == this->state)
 			return;
 
-		// State has changed.
+		this->state = state;
 
+		// State has changed.
+		{
+			lock_guard<recursive_mutex> lock(guard);
+			for(auto listener : listeners) {
+				listener->set(state);
+			}
+		}
 
 	}
 

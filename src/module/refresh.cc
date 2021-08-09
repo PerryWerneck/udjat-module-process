@@ -29,27 +29,6 @@
 
  namespace Udjat {
 
-	Process::Identifier::Stat Process::Identifier::refresh() {
-
-		try {
-
-			// Read /proc/pid/stat.
-			Stat pidstat(pid);
-
-			// Set process state.
-			set((State) pidstat.state);
-
-			return pidstat;
-
-		} catch(...) {
-
-			reset();
-			throw;
-
-		}
-
-	}
-
 	void Process::Agent::Controller::refresh() noexcept {
 
 		lock_guard<recursive_mutex> lock(guard);
@@ -96,23 +75,15 @@
 
 				list<Entry> pids;
 
-				unsigned long long totaltime = 0;
+				float totaltime = 0;
 
 				for(auto ix = identifiers.begin(); ix != identifiers.end(); ix++) {
 
-					Identifier::Stat stats(ix->refresh());
-
-					unsigned long long cpu = (stats.utime + stats.stime);
-
-					if(ix->last.cpu && cpu >= ix->last.cpu) {
-						unsigned long long time = (cpu - ix->last.cpu);
-						totaltime += time;
-						float cpu = (float) time;
+					unsigned long cpu = ix->refresh();
+					if(cpu) {
+						totaltime += (float) cpu;
 						pids.emplace_back(*ix,cpu);
-					} else {
-						ix->usage.cpu = 0;
 					}
-					ix->last.cpu = cpu;	// Store value for next check.
 
 				}
 
@@ -126,11 +97,9 @@
 					cout << "Updating usage by pid" << endl;
 #endif // DEBUG
 
-					// sysusage ........... totaltime
-					// info.usage.cpu ..... ix->usage
-
 					for(auto ix = pids.begin(); ix != pids.end(); ix++) {
-						ix->info.usage.cpu = (ix->usage * sysusage) / ((float) totaltime);
+						ix->info.refresh(totaltime);
+						// ix->info.usage.cpu = (ix->getUsage() * sysusage) / ((float) totaltime);
 					}
 
 				}

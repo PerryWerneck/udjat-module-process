@@ -33,4 +33,13 @@
 		Controller::getInstance().remove(this);
 	}
 
+	void Process::Agent::get(const Request &request, Response &response) {
+
+		Identifier::Stat stat(info);
+
+		response["vsize"] = stat.vsize;
+
+
+	}
+
  }
