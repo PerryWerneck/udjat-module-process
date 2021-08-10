@@ -83,7 +83,11 @@
 
 			/// @brief Data from /proc/pid/stat.
 			/// https://www.kernel.org/doc/html/latest/filesystems/proc.html
-			struct Stat {
+			class UDJAT_API Stat {
+			private:
+				void set(pid_t pid);
+
+			public:
 				char 				state = 0;			///< @brief Process state.
 				int 				ppid = 0;			///< @brief The PID of the parent of this process.
 				int 				pgrp = 0;			///< @brief The process group ID of the process.
@@ -136,9 +140,7 @@
 				int					exit_code = 0;		///< @brief (since Linux 3.5) The thread's exit status in the form reported by waitpid(2).
 
 				Stat(pid_t pid);
-
-				Stat(const Identifier *info) : Stat((pid_t) *info) {
-				}
+				Stat(const Identifier *info);
 
 			};
 

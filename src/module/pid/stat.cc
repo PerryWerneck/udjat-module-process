@@ -256,6 +256,20 @@
  namespace Udjat {
 
 	Process::Identifier::Stat::Stat(pid_t pid) {
+		set(pid);
+	}
+
+	Process::Identifier::Stat::Stat(const Process::Identifier *info) {
+		if(info) {
+			set((pid_t) *info);
+		}
+	}
+
+	void Process::Identifier::Stat::set(pid_t pid) {
+
+		if(pid < 0) {
+			return;
+		}
 
 		// http://stackoverflow.com/questions/16011677/calculating-cpu-usage-using-proc-files
 		// https://github.com/mmcilroy/cpu_usage
@@ -346,7 +360,6 @@
 		if(sz != 50) {
 			throw runtime_error("Error parsing /proc/pid/stat");
 		}
-
 
 	}
 

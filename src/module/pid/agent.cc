@@ -26,11 +26,14 @@
  namespace Udjat {
 
 	Process::Agent::Agent() {
-		Process::Controller::getInstance().insert(this);
 	}
 
 	Process::Agent::~Agent() {
 		Process::Controller::getInstance().remove(this);
+	}
+
+	void Process::Agent::start() {
+		Process::Controller::getInstance().insert(this);
 	}
 
 	void Process::Agent::get(const Request &request, Response &response) {
@@ -42,9 +45,11 @@
 
 	}
 
+	/*
 	bool Process::Agent::probe(const Identifier &ident) noexcept {
 		return false;
 	}
+	*/
 
 	void Process::Agent::setIdentifier(const Identifier *pid) {
 

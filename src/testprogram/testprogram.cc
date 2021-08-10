@@ -31,9 +31,13 @@
  class SampleAgent : public Process::Agent {
  public:
  	SampleAgent() : Process::Agent() {
- 		Process::Identifier info(getpid());
- 		cout << "Exename: '" << info.exename() << "'" << endl;
+		start();
 	}
+
+	bool probe(const Process::Identifier &ident) const noexcept override {
+		return ident == getpid();
+	}
+
  };
 
  int main(int argc, char **argv) {
@@ -42,7 +46,7 @@
 
 	Logger::redirect(nullptr,true);
 
-	SampleAgent(agent);
+	SampleAgent agent;
 
 	Udjat::run();
 

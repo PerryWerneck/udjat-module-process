@@ -38,10 +38,12 @@
 		protected:
 			Agent();
 
+			void start() override;
+
 			/// @brief Test if the identifier match the agent.
 			/// @param ident A process identifier.
 			/// @return true if the identifier match the agent requirements.
-			virtual bool probe(const Identifier &ident) noexcept;
+			virtual bool probe(const Identifier &ident) const noexcept = 0;
 
 			virtual void setIdentifier(const Identifier *info);
 
