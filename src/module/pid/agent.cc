@@ -35,11 +35,35 @@
 
 	void Process::Agent::get(const Request &request, Response &response) {
 
-		Identifier::Stat stat(info);
+		Identifier::Stat stat(pid);
 
 		response["vsize"] = stat.vsize;
 
 
 	}
+
+	bool Process::Agent::probe(const Identifier &ident) noexcept {
+		return false;
+	}
+
+	void Process::Agent::setIdentifier(const Identifier *pid) {
+
+		if(pid == this->pid) {
+			return;
+		}
+
+		this->pid = pid;
+
+		// Notify state change.
+		if(pid) {
+			info("Detected on pid '{}'", ((pid_t) *pid));
+		} else {
+			info("Process is {}","dead");
+		}
+
+		// Mark as updated and changed.
+		updated(true);
+	}
+
 
  }

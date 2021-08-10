@@ -31,11 +31,20 @@
 
  		class UDJAT_API Agent : public Udjat::Abstract::Agent {
 		private:
+			friend class Process::Controller;
 
-			const Identifier *info = nullptr;
+			const Identifier *pid = nullptr;
 
 		protected:
 			Agent();
+
+			/// @brief Test if the identifier match the agent.
+			/// @param ident A process identifier.
+			/// @return true if the identifier match the agent requirements.
+			virtual bool probe(const Identifier &ident) noexcept;
+
+			virtual void setIdentifier(const Identifier *info);
+
 
 		public:
 

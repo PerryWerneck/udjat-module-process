@@ -75,11 +75,20 @@
 			cout << "Adding process " << pid << " - " << element.exename() << endl;
 #endif // DEBUG
 
+			for(auto agent : agents) {
+
+				if(!agent->pid && agent->probe(element)) {
+					agent->setIdentifier(&element);
+				}
+
+			}
+
 		} catch(const exception &e) {
 
 			cerr << "Error '" << e.what() << "' inserting pid " << pid << endl;
 
 		}
+
 
 	}
 
@@ -89,10 +98,19 @@
 
 			lock_guard<recursive_mutex> lock(guard);
 
-			identifiers.remove_if([pid](Identifier &e) {
-				return e == pid;
-			});
+			identifiers.remove_if([this,pid](Identifier &e) {
 
+				if(e == pid) {
+					for(auto agent : agents) {
+						if(agent->pid == &e) {
+							agent->setIdentifier(nullptr);
+						}
+					}
+					return true;
+				}
+				return false;
+
+			});
 
 		} catch(const exception &e) {
 
