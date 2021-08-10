@@ -97,7 +97,7 @@
 
 						} else {
 
-							ix->setCpu(0);
+							ix->cpu.percent = 0;
 
 						}
 
@@ -105,7 +105,7 @@
 
 					} else {
 						ix->cpu.last = 0;
-						ix->setCpu(0);
+						ix->cpu.percent = 0;
 					}
 
 				}
@@ -121,7 +121,7 @@
 #endif // DEBUG
 
 					for(auto ix = pids.begin(); ix != pids.end(); ix++) {
-						ix->info.setCpu((sysusage * ix->usage) / totaltime);
+						ix->info.cpu.percent = (sysusage * ix->usage) / totaltime;
 					}
 
 

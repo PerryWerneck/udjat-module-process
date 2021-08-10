@@ -54,6 +54,14 @@
 	void Process::Controller::insert(Process::Agent *agent) {
 		lock_guard<recursive_mutex> lock(guard);
 		agents.push_back(agent);
+
+		for(auto identifier = identifiers.begin(); identifier != identifiers.end(); identifier++) {
+			if(agent->probe(*identifier)) {
+				agent->setIdentifier(&(*identifier));
+				break;
+			}
+		}
+
 	}
 
 	void Process::Controller::remove(Process::Agent *agent) {

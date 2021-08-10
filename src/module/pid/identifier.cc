@@ -54,59 +54,8 @@
 	}
 
 	void Process::Identifier::reset() {
-
 		set(STATE_UNDEFINED);
-
-		{
-			lock_guard<recursive_mutex> lock(guard);
-			for(auto listener : listeners) {
-				listener->setCPU(0);
-			}
-		}
-
-	}
-
-	/*
-	unsigned long Process::Identifier::refresh() {
-
-		try {
-
-			// Read /proc/pid/stat.
-			Stat stat(pid);
-
-			// Set process state.
-			set((State) stat.state);
-
-			// Update CPU time.
-			unsigned long current = (stat.utime + stat.stime);
-
-			if(cpu.last && current > cpu.last) {
-				cpu.current = (current - cpu.last);
-			} else {
-				cpu.current = 0;
-			}
-
-			if(!cpu.current) {
-				lock_guard<recursive_mutex> lock(guard);
-				for(auto listener : listeners) {
-					listener->setCPU(0);
-				}
-			}
-
-			cpu.last = current;
-
-		} catch(...) {
-
-			reset();
-			throw;
-
-		}
-
-		return cpu.current;
-	}
-	*/
-
-	void Process::Identifier::setCpu(float percent) {
+		cpu.percent = 0;
 	}
 
 	void Process::Identifier::set(const State state) {
@@ -115,14 +64,6 @@
 			return;
 
 		this->state = state;
-
-		// State has changed.
-		{
-			lock_guard<recursive_mutex> lock(guard);
-			for(auto listener : listeners) {
-				listener->set(state);
-			}
-		}
 
 	}
 

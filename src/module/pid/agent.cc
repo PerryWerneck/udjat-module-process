@@ -58,7 +58,7 @@
 		if(pid) {
 			info("Detected on pid '{}'", ((pid_t) *pid));
 		} else {
-			info("Process is {}","dead");
+			info("{}","Not available");
 		}
 
 		// Mark as updated and changed.

@@ -51,32 +51,18 @@
 				STATE_UNDEFINED		= 0		///< @brief Undefined.
 			};
 
-			class UDJAT_API Listener {
-			public:
-
-				/// @brief Process STAT has changed.
-				virtual void set(const State &state) noexcept = 0;
-
-				/// @brief CPU usage has changed.
-				virtual void setCPU(const float percent) noexcept = 0;
-
-			};
-
-
 		private:
 
 			friend class Controller;
 
-			pid_t pid;
+			pid_t pid = -1;
 
 			/// @brief Mutex for serialization.
 			static std::recursive_mutex guard;
 
-			/// @brief Listeners.
-			std::list<Listener *> listeners;
-
 			/// @brief CPU 'Ticks'
 			struct {
+				float percent = 0;			///< @brief CPU usage on last check.
 				unsigned long last = 0;		///< @brief utime+stime got in the last refresh.
 			} cpu;
 
@@ -85,9 +71,6 @@
 
 			/// @brief Set current state
 			void set(const State state);
-
-			/// @brief Set CPU %;
-			void setCpu(float percent);
 
 			/// @brief Cleanup states.
 			void reset();
