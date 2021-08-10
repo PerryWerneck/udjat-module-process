@@ -26,11 +26,11 @@
  namespace Udjat {
 
 	Process::Agent::Agent() {
-		Controller::getInstance().insert(this);
+		Process::Controller::getInstance().insert(this);
 	}
 
 	Process::Agent::~Agent() {
-		Controller::getInstance().remove(this);
+		Process::Controller::getInstance().remove(this);
 	}
 
 	void Process::Agent::get(const Request &request, Response &response) {

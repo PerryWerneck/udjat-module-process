@@ -43,34 +43,33 @@
 
  namespace Udjat {
 
-	std::recursive_mutex Process::Agent::Controller::guard;
+	std::recursive_mutex Process::Controller::guard;
 
-	Process::Agent::Controller & Process::Agent::Controller::getInstance() {
+	Process::Controller & Process::Controller::getInstance() {
 		lock_guard<recursive_mutex> lock(guard);
 		static Controller instance;
 		return instance;
 	}
 
-	void Process::Agent::Controller::insert(Process::Agent *agent) {
+	void Process::Controller::insert(Process::Agent *agent) {
 		lock_guard<recursive_mutex> lock(guard);
 		agents.push_back(agent);
 	}
 
-	void Process::Agent::Controller::remove(Process::Agent *agent) {
+	void Process::Controller::remove(Process::Agent *agent) {
 		lock_guard<recursive_mutex> lock(guard);
 		agents.remove_if([agent](Agent *a) {
 			return a == agent;
 		});
 	}
 
-	void Process::Agent::Controller::Controller::insert(pid_t pid) noexcept {
+	void Process::Controller::Controller::insert(pid_t pid) noexcept {
 
 		lock_guard<recursive_mutex> lock(guard);
 
 		try {
 
 			auto element = identifiers.emplace_back(pid);
-			element.refresh();
 
 #ifdef DEBUG
 			cout << "Adding process " << pid << " - " << element.exename() << endl;
@@ -84,7 +83,7 @@
 
 	}
 
-	void Process::Agent::Controller::Controller::remove(pid_t pid) noexcept {
+	void Process::Controller::Controller::remove(pid_t pid) noexcept {
 
 		try {
 

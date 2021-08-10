@@ -39,7 +39,7 @@
 		return true;
  	}
 
-	void Process::Agent::Controller::load(std::list<pid_t> &entries) {
+	void Process::Controller::load(std::list<pid_t> &entries) {
 
 		entries.clear(); // Just in case
 
@@ -84,7 +84,7 @@
 		return false;
 	}
 
-	void Process::Agent::Controller::reload() noexcept {
+	void Process::Controller::reload() noexcept {
 
 		try {
 

@@ -56,7 +56,6 @@
 	void Process::Identifier::reset() {
 
 		set(STATE_UNDEFINED);
-		cpu.current = 0;
 
 		{
 			lock_guard<recursive_mutex> lock(guard);
@@ -67,6 +66,7 @@
 
 	}
 
+	/*
 	unsigned long Process::Identifier::refresh() {
 
 		try {
@@ -104,17 +104,9 @@
 
 		return cpu.current;
 	}
+	*/
 
-	void Process::Identifier::refresh(float sysusage) {
-
-		float percent = cpu.current / sysusage;
-
-		{
-			lock_guard<recursive_mutex> lock(guard);
-			for(auto listener : listeners) {
-				listener->setCPU(percent);
-			}
-		}
+	void Process::Identifier::setCpu(float percent) {
 	}
 
 	void Process::Identifier::set(const State state) {

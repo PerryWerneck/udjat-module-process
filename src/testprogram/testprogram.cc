@@ -32,7 +32,6 @@
  public:
  	SampleAgent() : Process::Agent() {
  		Process::Identifier info(getpid());
-		info.refresh();
  		cout << "Exename: '" << info.exename() << "'" << endl;
 	}
  };

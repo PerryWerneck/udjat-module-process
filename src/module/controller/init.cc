@@ -71,7 +71,7 @@
 
  namespace Udjat {
 
-	Process::Agent::Controller::Controller() {
+	Process::Controller::Controller() {
 
 		cout << "Process controller is starting" << endl;
 
@@ -330,7 +330,7 @@
 
 	}
 
-	Process::Agent::Controller::~Controller() {
+	Process::Controller::~Controller() {
 		cout << "Process controller is stopping" << endl;
 		MainLoop::getInstance().remove(this);
 

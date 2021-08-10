@@ -29,7 +29,7 @@
 
  namespace Udjat {
 
-	void Process::Agent::Controller::refresh() noexcept {
+	void Process::Controller::refresh() noexcept {
 
 		lock_guard<recursive_mutex> lock(guard);
 
@@ -75,14 +75,37 @@
 
 				list<Entry> pids;
 
+				// Update Process stats.
 				float totaltime = 0;
-
 				for(auto ix = identifiers.begin(); ix != identifiers.end(); ix++) {
 
-					unsigned long cpu = ix->refresh();
-					if(cpu) {
-						totaltime += (float) cpu;
-						pids.emplace_back(*ix,cpu);
+					Identifier::Stat stat(*ix);
+
+					ix->set((Identifier::State) stat.state);
+
+					unsigned long time = (stat.utime + stat.stime);
+
+					if(time) {
+
+						float current = 0;
+
+						if(ix->cpu.last && time > ix->cpu.last) {
+
+							current = (float) (time - ix->cpu.last);
+							totaltime += (float) current;
+							pids.emplace_back(*ix, current);
+
+						} else {
+
+							ix->setCpu(0);
+
+						}
+
+						ix->cpu.last = time;
+
+					} else {
+						ix->cpu.last = 0;
+						ix->setCpu(0);
 					}
 
 				}
@@ -98,9 +121,9 @@
 #endif // DEBUG
 
 					for(auto ix = pids.begin(); ix != pids.end(); ix++) {
-						ix->info.refresh(totaltime);
-						// ix->info.usage.cpu = (ix->getUsage() * sysusage) / ((float) totaltime);
+						ix->info.setCpu((sysusage * ix->usage) / totaltime);
 					}
+
 
 				}
 			}

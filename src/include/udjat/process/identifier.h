@@ -26,6 +26,8 @@
 
  	namespace Process {
 
+ 		class Controller;
+
  		/// @brief Process identifier.
 		/// @brief A single process.
 		class UDJAT_API Identifier {
@@ -63,6 +65,8 @@
 
 		private:
 
+			friend class Controller;
+
 			pid_t pid;
 
 			/// @brief Mutex for serialization.
@@ -73,7 +77,6 @@
 
 			/// @brief CPU 'Ticks'
 			struct {
-				unsigned long current = 0;	///< @brief Time of this process has been scheduled in this cycle.
 				unsigned long last = 0;		///< @brief utime+stime got in the last refresh.
 			} cpu;
 
@@ -82,6 +85,9 @@
 
 			/// @brief Set current state
 			void set(const State state);
+
+			/// @brief Set CPU %;
+			void setCpu(float percent);
 
 			/// @brief Cleanup states.
 			void reset();
@@ -152,11 +158,6 @@
 				}
 
 			};
-
-			unsigned long refresh();
-
-			/// @brief Set sysusage, update CPU use in %
-			void refresh(float sysusage);
 
 			constexpr bool operator==(const pid_t pid) const {
 				return this->pid == pid;

@@ -28,7 +28,7 @@
 
 	namespace Process {
 
-		class Agent::Controller {
+		class Controller {
 		private:
 			static std::recursive_mutex guard;
 

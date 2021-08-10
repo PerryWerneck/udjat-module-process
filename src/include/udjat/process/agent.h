@@ -39,8 +39,6 @@
 
 		public:
 
-			class Controller;
-
 			class Factory : public Udjat::Factory {
 			public:
 				Factory();
