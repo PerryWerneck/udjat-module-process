@@ -17,45 +17,15 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
- #include <udjat.h>
- #include <udjat/module.h>
- #include <unistd.h>
+ #include "private.h"
 
- using namespace std;
- using namespace Udjat;
+ namespace Udjat {
 
- int main(int argc, char **argv) {
+	bool Process::Agent::factory(Abstract::Agent &parent, const pugi::xml_node &node) {
 
-	setlocale( LC_ALL, "" );
 
-	Logger::redirect(nullptr,true);
-
-	auto module = udjat_module_init();
-	auto agent = Abstract::Agent::init("${PWD}/test.xml");
-
-	try {
-
-		Module::load("http");
-
-		for(auto child : *agent) {
-			cout << "http://localhost:8989/api/1.0/agent/" << child->getName() << ".xml" << endl;
-		}
-
-	} catch(const std::exception &e) {
-
-		cerr << e.what() << endl;
-
+		return true;
 	}
 
-	cout << "Waiting for requests" << endl;
+ }
 
-	Udjat::run();
-
-	Abstract::Agent::deinit();
-
-	cout << "Removing module" << endl;
-	delete module;
-	Module::unload();
-
-	return 0;
-}

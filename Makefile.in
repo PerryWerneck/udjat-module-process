@@ -6,6 +6,7 @@ PACKAGE_NAME=@PACKAGE_NAME@
 MAIN_SOURCES= \
 	$(wildcard src/module/*.cc) \
 	$(wildcard src/module/pid/*.cc) \
+	$(wildcard src/module/agent/*.cc) \
 	$(wildcard src/module/controller/*.cc)
 	
 TEST_SOURCES= \

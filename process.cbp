@@ -42,9 +42,13 @@
 		<Unit filename="src/include/controller.h" />
 		<Unit filename="src/include/udjat/process/agent.h" />
 		<Unit filename="src/include/udjat/process/identifier.h" />
+		<Unit filename="src/module/agent/abstract.cc" />
+		<Unit filename="src/module/agent/factory.cc" />
+		<Unit filename="src/module/agent/private.h" />
 		<Unit filename="src/module/controller/controller.cc" />
 		<Unit filename="src/module/controller/init.cc" />
 		<Unit filename="src/module/controller/load.cc" />
+		<Unit filename="src/module/init.cc" />
 		<Unit filename="src/module/pid/agent.cc" />
 		<Unit filename="src/module/pid/identifier.cc" />
 		<Unit filename="src/module/pid/stat.cc" />

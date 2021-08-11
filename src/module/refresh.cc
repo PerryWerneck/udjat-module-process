@@ -128,6 +128,11 @@
 				}
 			}
 
+			// Update agents.
+			for(auto agent : agents) {
+				agent->refresh(true);
+			}
+
 		} catch(const exception &e) {
 
 			cerr << "Error '" << e.what() << "' while updating process info" << endl;

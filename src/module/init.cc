@@ -17,45 +17,41 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
- #include <udjat.h>
+ #include <config.h>
+ #include <udjat/process/agent.h>
  #include <udjat/module.h>
- #include <unistd.h>
+ #include <udjat/factory.h>
 
  using namespace std;
- using namespace Udjat;
 
- int main(int argc, char **argv) {
+ static const Udjat::ModuleInfo moduleinfo{
+	PACKAGE_NAME,								// The module name.
+	"Process information agents", 				// The module description.
+	PACKAGE_VERSION, 							// The module version.
+	PACKAGE_URL, 								// The package URL.
+	PACKAGE_BUGREPORT 							// The bug report address.
+ };
 
-	setlocale( LC_ALL, "" );
+ /// @brief Register udjat module.
+ Udjat::Module * udjat_module_init() {
 
-	Logger::redirect(nullptr,true);
+	class Module : public Udjat::Module, public Udjat::Factory {
+	private:
 
-	auto module = udjat_module_init();
-	auto agent = Abstract::Agent::init("${PWD}/test.xml");
+	public:
+		Module() : Udjat::Module("process",&moduleinfo), Factory("process",&moduleinfo) {
+		};
 
-	try {
-
-		Module::load("http");
-
-		for(auto child : *agent) {
-			cout << "http://localhost:8989/api/1.0/agent/" << child->getName() << ".xml" << endl;
+		virtual ~Module() {
 		}
 
-	} catch(const std::exception &e) {
+		bool parse(Udjat::Abstract::Agent &parent, const pugi::xml_node &node) const {
+			return Udjat::Process::Agent::factory(parent,node);
+		}
 
-		cerr << e.what() << endl;
+	};
 
-	}
+	return new Module();
+ }
 
-	cout << "Waiting for requests" << endl;
 
-	Udjat::run();
-
-	Abstract::Agent::deinit();
-
-	cout << "Removing module" << endl;
-	delete module;
-	Module::unload();
-
-	return 0;
-}

@@ -20,7 +20,6 @@
  #pragma once
 
  #include <udjat/defs.h>
- #include <udjat/factory.h>
  #include <udjat/agent.h>
  #include <udjat/state.h>
  #include <udjat/process/identifier.h>
@@ -37,6 +36,7 @@
 
 		protected:
 			Agent();
+			Agent(const pugi::xml_node &node);
 
 			void start() override;
 
@@ -47,14 +47,9 @@
 
 			virtual void setIdentifier(const Identifier *info);
 
-
 		public:
 
-			class Factory : public Udjat::Factory {
-			public:
-				Factory();
-				bool parse(Abstract::Agent &parent, const pugi::xml_node &node) const override;
-			};
+			static bool factory(Abstract::Agent &parent, const pugi::xml_node &node);
 
 			virtual ~Agent();
 

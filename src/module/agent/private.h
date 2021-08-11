@@ -19,56 +19,6 @@
 
  #include <config.h>
  #include <udjat/process/agent.h>
- #include <controller.h>
 
  using namespace std;
 
- namespace Udjat {
-
-	Process::Agent::Agent() {
-	}
-
-	Process::Agent::~Agent() {
-		Process::Controller::getInstance().remove(this);
-	}
-
-	void Process::Agent::start() {
-		Process::Controller::getInstance().insert(this);
-	}
-
-	void Process::Agent::get(const Request &request, Response &response) {
-
-		Identifier::Stat stat(pid);
-
-		response["vsize"] = stat.vsize;
-
-
-	}
-
-	/*
-	bool Process::Agent::probe(const Identifier &ident) noexcept {
-		return false;
-	}
-	*/
-
-	void Process::Agent::setIdentifier(const Identifier *pid) {
-
-		if(pid == this->pid) {
-			return;
-		}
-
-		this->pid = pid;
-
-		// Notify state change.
-		if(pid) {
-			info("Detected on pid '{}'", ((pid_t) *pid));
-		} else {
-			info("{}","Not available");
-		}
-
-		// Mark as updated and changed.
-		updated(true);
-	}
-
-
- }
