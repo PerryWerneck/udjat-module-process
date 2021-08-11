@@ -71,25 +71,33 @@
 		});
 	}
 
+	void Process::Controller::Controller::onInsert(const Identifier &identifier) {
+
+		lock_guard<recursive_mutex> lock(guard);
+
+		std::string exec = identifier.exename();
+
+//#ifdef DEBUG
+//		cout << "Adding process " << ((pid_t) identifier) << " - " << exec << " - " << agents.size() << endl;
+//#endif // DEBUG
+
+		for(auto agent : agents) {
+
+			if(!agent->pid && agent->probe(exec.c_str())) {
+				agent->setIdentifier(&identifier);
+			}
+
+		}
+
+	}
+
 	void Process::Controller::Controller::insert(pid_t pid) noexcept {
 
 		lock_guard<recursive_mutex> lock(guard);
 
 		try {
 
-			auto element = identifiers.emplace_back(pid);
-
-#ifdef DEBUG
-			cout << "Adding process " << pid << " - " << element.exename() << endl;
-#endif // DEBUG
-
-			for(auto agent : agents) {
-
-				if(!agent->pid && agent->probe(element)) {
-					agent->setIdentifier(&element);
-				}
-
-			}
+			onInsert(identifiers.emplace_back(pid));
 
 		} catch(const exception &e) {
 

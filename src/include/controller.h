@@ -57,6 +57,8 @@
 			/// @brief Update CPU usage.
 			void refresh() noexcept;
 
+			void onInsert(const Identifier &identifier);
+
 			void insert(const pid_t pid) noexcept;
 			void remove(const pid_t pid) noexcept;
 

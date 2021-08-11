@@ -40,10 +40,15 @@
 
 			void start() override;
 
+			/// @brief Test if the identifier exename match the agent.
+			/// @brief exename The identifier exename.
+			/// @return true if the identifier match the agent requirements.
+			virtual bool probe(const char *exename) const noexcept = 0;
+
 			/// @brief Test if the identifier match the agent.
 			/// @param ident A process identifier.
 			/// @return true if the identifier match the agent requirements.
-			virtual bool probe(const Identifier &ident) const noexcept = 0;
+			virtual bool probe(const Identifier &ident) const noexcept;
 
 			virtual void setIdentifier(const Identifier *info);
 

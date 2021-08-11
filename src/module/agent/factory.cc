@@ -30,11 +30,7 @@
 			const char *exename = Attribute(node,"exename").as_string();
 
 			if(exename && *exename) {
-#ifdef DEBUG
-				cout << "Exename: '" << exename << "'" << endl;
-#endif // DEBUG
-
-
+				parent.insert(make_shared<ExeNameAgent>(Quark(exename).c_str(), node));
 				return true;
 			}
 

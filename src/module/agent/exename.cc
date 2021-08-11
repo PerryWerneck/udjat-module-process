@@ -17,30 +17,21 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
- #include <config.h>
- #include <udjat/defs.h>
- #include <udjat/process/agent.h>
-
- using namespace std;
+ #include "private.h"
 
  namespace Udjat {
 
-	namespace Process {
-
-		/// @brief Monitor process by exename
-		class ExeNameAgent : public Process::Agent {
-		private:
-
-			/// @brief The name of the process to monitor.
-			const char *exename;
-
-		public:
-			ExeNameAgent(const char *exename, const pugi::xml_node &node);
-
-			bool probe(const char *exename) const noexcept override;
-
-		};
+	Process::ExeNameAgent::ExeNameAgent(const char *e, const pugi::xml_node &node) : Process::Agent(node), exename(e) {
 
 	}
 
+	bool Process::ExeNameAgent::probe(const char *name) const noexcept {
+
+		if(strcasecmp(name,this->exename) == 0)
+			return true;
+
+		return false;
+	}
+
  }
+

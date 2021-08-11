@@ -45,7 +45,9 @@
 		if(sz > 0) {
 			name[sz] = 0;
 		} else {
+#ifndef DEBUG
 			cerr << "Error '" << strerror(errno) << "' getting exename for pid " << pid << endl;
+#endif // DEBUG
 			return string{"pid"} + std::to_string((unsigned int) pid);
 		}
 

@@ -33,7 +33,27 @@
 		Process::Controller::getInstance().remove(this);
 	}
 
+	bool Process::Agent::probe(const Identifier &ident) const noexcept {
+
+		string exe;
+
+		try {
+
+			exe = ident.exename();
+
+		} catch(...) {
+
+			return false;
+
+		}
+
+		return probe(exe.c_str());
+	}
+
 	void Process::Agent::start() {
+#ifdef DEBUG
+		info("{}","starting");
+#endif // DEBUG
 		Process::Controller::getInstance().insert(this);
 	}
 

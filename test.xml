@@ -3,10 +3,10 @@
 <config>
 
 	<!-- Uses exename -->
-	<process exename='codeblocks.exe' />
+	<process name='codeblocks' exename='/usr/bin/codeblocks' />
 	
 	<!-- Uses pidfile -->
-	<process pidfile='/var/run/displaymanager.pid' update-timer='60'/>
+	<process name='dm' pidfile='/var/run/displaymanager.pid' update-timer='60'/>
 
 	
 </config>

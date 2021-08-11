@@ -81,7 +81,7 @@
 			load(pids);
 
 			for(auto pid : pids) {
-				identifiers.emplace_back(pid);
+				onInsert(identifiers.emplace_back(pid));
 			}
 		}
 
