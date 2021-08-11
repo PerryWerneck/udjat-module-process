@@ -18,13 +18,44 @@
  */
 
  #include "private.h"
+ #include <udjat/tools/xml.h>
+ #include <udjat/tools/quark.h>
 
  namespace Udjat {
 
 	bool Process::Agent::factory(Abstract::Agent &parent, const pugi::xml_node &node) {
 
+		// Process by exename
+		{
+			const char *exename = Attribute(node,"exename").as_string();
 
-		return true;
+			if(exename && *exename) {
+#ifdef DEBUG
+				cout << "Exename: '" << exename << "'" << endl;
+#endif // DEBUG
+
+
+				return true;
+			}
+
+		}
+
+		// Process by pidfile
+		{
+			const char *pidfile = Attribute(node,"pidfile").as_string();
+
+			if(pidfile) {
+#ifdef DEBUG
+				cout << "Pidfile: '" << pidfile << "'" << endl;
+#endif // DEBUG
+
+
+				return true;
+			}
+
+		}
+
+		return false;
 	}
 
  }

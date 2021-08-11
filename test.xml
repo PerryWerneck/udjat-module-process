@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<config>
+
+	<!-- Uses exename -->
+	<process exename='codeblocks.exe' />
+	
+	<!-- Uses pidfile -->
+	<process pidfile='/var/run/displaymanager.pid' update-timer='60'/>
+
+	
+</config>
+
