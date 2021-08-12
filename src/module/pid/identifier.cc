@@ -59,6 +59,12 @@
 		throw runtime_error("Invalid or unexpected process state");
 	}
 
+	void Process::Identifier::get(Udjat::Value &value) const {
+
+		value["cpu"].setFraction(cpu.percent);
+
+	}
+
 	Process::Identifier::State Process::Identifier::getState(const char *name) {
 
 		for(size_t ix = 0; statenames[ix].name; ix++) {

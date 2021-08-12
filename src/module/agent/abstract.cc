@@ -72,6 +72,7 @@
 		super::get(request,response);
 
 		if(pid) {
+			pid->get(response);
 			Identifier::Stat(pid).get(response);
 		} else {
 			Identifier::Stat().get(response);

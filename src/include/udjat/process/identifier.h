@@ -99,6 +99,8 @@
 
 			~Identifier();
 
+			void get(Udjat::Value &value) const;
+
 			/// @brief Data from /proc/pid/stat.
 			/// https://www.kernel.org/doc/html/latest/filesystems/proc.html
 			class UDJAT_API Stat {
