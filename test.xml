@@ -3,11 +3,25 @@
 <config>
 
 	<!-- Uses exename -->
-	<process name='codeblocks' exename='/usr/bin/codeblocks' />
+	<process name='codeblocks' exename='/usr/bin/codeblocks'>
 	
-	<!-- Uses pidfile -->
-	<process name='dm' pidfile='/var/run/displaymanager.pid' update-timer='60'/>
+		<state name='dead' process-state='dead' summary='Codeblocks is dead' />
+		<state name='sleeping' process-state='sleeping' summary='Codeblocks is sleeping' />
+	
+	</process>
+	
+	<process name='gdm' exename='/usr/sbin/gdm'>
+	
+		<state name='available' process-state='available' summary='GDM is available' />
+	
+	</process>
 
+	<!-- Uses pidfile -->
+	<process name='dm' pidfile='/var/run/displaymanager.pid' update-timer='60'>
+
+		<state name='available' process-state='available' summary='Display manager is available' />
+
+	</process>
 	
 </config>
 

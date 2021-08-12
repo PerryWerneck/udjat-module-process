@@ -71,7 +71,7 @@
 		});
 	}
 
-	void Process::Controller::Controller::onInsert(const Identifier &identifier) {
+	void Process::Controller::Controller::onInsert(Identifier &identifier) {
 
 		lock_guard<recursive_mutex> lock(guard);
 

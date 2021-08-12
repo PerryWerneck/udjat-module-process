@@ -19,18 +19,37 @@
 
  #include "private.h"
 
+ using Pid = Udjat::Process::Identifier;
+
  namespace Udjat {
 
+	/// @brief Agent state based on process state.
 	class ProcessState : public Process::Agent::State {
 	private:
+		Process::Identifier state = Pid::Undefined;
 
 	public:
-		ProcessState(const char *state, const pugi::xml_node &node) : Process::Agent::State(node) {
+		ProcessState(const char *s, const pugi::xml_node &node) : Process::Agent::State(node), state(Process::Identifier::getState(s)) {
 		}
 
 		bool test(const Process::Agent &agent) const noexcept override {
+			return agent.getState() == state;
 		}
 
+	};
+
+	/// @brief Agent state based on process availability.
+	class ProcessAvailable : public Process::Agent::State {
+	private:
+
+	public:
+		ProcessAvailable(const pugi::xml_node &node) : Process::Agent::State(node) {
+		}
+
+		bool test(const Process::Agent &agent) const noexcept override {
+			auto state = agent.getState();
+			return state != Pid::Dead && state != Pid::DeadCompat && state != Pid::Zombie && state != Pid::Stopped;
+		}
 
 	};
 
@@ -42,9 +61,24 @@
 		// Agent state by process
 		attribute = node.attribute("process-state");
 		if(attribute) {
-			states.push_back(make_shared<ProcessState>(attribute.as_string(),node));
+
+			const char *attr = attribute.as_string();
+
+			if(strcasecmp(attr,"available")) {
+				states.push_back(make_shared<ProcessState>(attribute.as_string(),node));
+			} else {
+				states.push_back(make_shared<ProcessAvailable>(node));
+			}
 			return;
 		}
+
+		// Agent state by CPU Use
+
+
+		// Agent state by Memory Use
+
+
+		// Agent state by swap use.
 
 	}
 

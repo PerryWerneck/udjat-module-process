@@ -50,6 +50,16 @@
 		return probe(exe.c_str());
 	}
 
+	Process::Identifier::State Process::Agent::getState() const noexcept {
+
+		if(pid) {
+			return pid->getState();
+		}
+
+		return Process::Identifier::Dead;
+
+	}
+
 	void Process::Agent::start() {
 #ifdef DEBUG
 		info("{}","starting");
@@ -72,7 +82,7 @@
 	}
 	*/
 
-	void Process::Agent::setIdentifier(const Identifier *pid) {
+	void Process::Agent::setIdentifier(Identifier *pid) {
 
 		if(pid == this->pid) {
 			return;

@@ -30,8 +30,50 @@
 
 	recursive_mutex Process::Identifier::guard;
 
+	const Process::Identifier::StateName  Process::Identifier::statenames[] = {
+		{ Running,			"Running"		},
+		{ Sleeping,			"Sleeping"		},
+		{ Waiting,			"Waiting"		},
+		{ Zombie,			"Zombie"		},
+		{ Stopped,			"Stopped"		},
+		{ TracingStop,		"Tracing stop"	},
+		{ Paging,			"Paging" 		},
+		{ Dead,				"Dead" 			},
+		{ DeadCompat,		"Dead-compat" 	},
+		{ Wakekill,			"Wakekill" 		},
+		{ Waking,			"Waking" 		},
+		{ Parked,			"Parked" 		},
+		{ Undefined,		nullptr			}
+	};
+
+	const Process::Identifier::StateName & Process::Identifier::getStateName(const State state) {
+
+		for(size_t ix = 0; statenames[ix].name; ix++) {
+
+			if(statenames[ix].state == state) {
+				return statenames[ix];
+			}
+
+		}
+
+		throw runtime_error("Invalid or unexpected process state");
+	}
+
+	Process::Identifier::State Process::Identifier::getState(const char *name) {
+
+		for(size_t ix = 0; statenames[ix].name; ix++) {
+
+			if(!strcasecmp(statenames[ix].name,name)) {
+				return statenames[ix].state;
+			}
+
+		}
+
+		throw runtime_error("Invalid or unexpected process state name");
+	}
+
 	Process::Identifier::~Identifier() {
-		set(STATE_DEAD);
+		set(Dead);
 	}
 
 	std::string Process::Identifier::exename() const {
@@ -56,7 +98,7 @@
 	}
 
 	void Process::Identifier::reset() {
-		set(STATE_UNDEFINED);
+		set(Undefined);
 		cpu.percent = 0;
 	}
 
@@ -67,6 +109,18 @@
 
 		this->state = state;
 
+	}
+
+	Process::Identifier::State Process::Identifier::getState() {
+
+		if(state == (State) -1) {
+
+			// No state, get it.
+			set( (State) Stat(this).state);
+
+		}
+
+		return state;
 	}
 
  }

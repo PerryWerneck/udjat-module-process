@@ -35,7 +35,7 @@
 		private:
 			friend class Process::Controller;
 
-			const Identifier *pid = nullptr;
+			Identifier *pid = nullptr;
 
 			/// @brief Agent states.
 			std::vector<std::shared_ptr<State>> states;
@@ -56,7 +56,7 @@
 			/// @return true if the identifier match the agent requirements.
 			virtual bool probe(const Identifier &ident) const noexcept;
 
-			virtual void setIdentifier(const Identifier *info);
+			virtual void setIdentifier(Identifier *info);
 
 			std::shared_ptr<Abstract::State> stateFromValue() const override;
 
@@ -70,6 +70,8 @@
 
 			bool hasStates() const noexcept override;
 			void append_state(const pugi::xml_node &node) override;
+
+			Process::Identifier::State getState() const noexcept;
 
  		};
 
