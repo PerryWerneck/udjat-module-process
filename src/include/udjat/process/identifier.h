@@ -106,7 +106,7 @@
 				void set(pid_t pid);
 
 			public:
-				char 				state = 0;			///< @brief Process state.
+				char 				state = 'X';		///< @brief Process state.
 				int 				ppid = 0;			///< @brief The PID of the parent of this process.
 				int 				pgrp = 0;			///< @brief The process group ID of the process.
 				int 				session = 0;		///< @brief The session ID of the process.
@@ -157,8 +157,11 @@
 				unsigned long		env_end = 0;		///< @brief (since Linux 3.5) Address below which program environment is placed.
 				int					exit_code = 0;		///< @brief (since Linux 3.5) The thread's exit status in the form reported by waitpid(2).
 
+				constexpr Stat() {}
 				Stat(pid_t pid);
 				Stat(const Identifier *info);
+
+				void get(Udjat::Value &value) const;
 
 			};
 

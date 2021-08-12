@@ -69,10 +69,16 @@
 
 	void Process::Agent::get(const Request &request, Response &response) {
 
-		Identifier::Stat stat(pid);
+		super::get(request,response);
 
-		response["vsize"] = stat.vsize;
+		if(pid) {
+			Identifier::Stat(pid).get(response);
+		} else {
+			Identifier::Stat().get(response);
+		}
 
+		//response["vsize"] = stat.vsize;
+		//response["mode"] = Identifier::getStateName(getState()).name;
 
 	}
 

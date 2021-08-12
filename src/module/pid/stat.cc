@@ -255,16 +255,21 @@
 
  namespace Udjat {
 
-	Process::Identifier::Stat::Stat(pid_t pid) {
+	Process::Identifier::Stat::Stat(pid_t pid) : Stat() {
 		if(pid > 0) {
 			set(pid);
 		}
 	}
 
-	Process::Identifier::Stat::Stat(const Process::Identifier *info) {
+	Process::Identifier::Stat::Stat(const Process::Identifier *info) : Stat() {
 		if(info) {
 			set((pid_t) *info);
 		}
+	}
+
+	void Process::Identifier::Stat::get(Udjat::Value &value) const {
+		value["vsize"] = vsize;
+		value["mode"] = Process::Identifier::getStateName((Process::Identifier::State) state).name;
 	}
 
 	void Process::Identifier::Stat::set(pid_t pid) {
