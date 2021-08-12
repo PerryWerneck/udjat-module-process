@@ -29,10 +29,16 @@
 	namespace Process {
 
  		class UDJAT_API Agent : public Udjat::Abstract::Agent {
+		public:
+			class State;
+
 		private:
 			friend class Process::Controller;
 
 			const Identifier *pid = nullptr;
+
+			/// @brief Agent states.
+			std::vector<std::shared_ptr<State>> states;
 
 		protected:
 			Agent();
@@ -52,6 +58,8 @@
 
 			virtual void setIdentifier(const Identifier *info);
 
+			std::shared_ptr<Abstract::State> stateFromValue() const override;
+
 		public:
 
 			static bool factory(Abstract::Agent &parent, const pugi::xml_node &node);
@@ -59,6 +67,9 @@
 			virtual ~Agent();
 
 			void get(const Request &request, Response &response) override;
+
+			bool hasStates() const noexcept override;
+			void append_state(const pugi::xml_node &node) override;
 
  		};
 

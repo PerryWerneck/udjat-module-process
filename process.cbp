@@ -46,6 +46,7 @@
 		<Unit filename="src/module/agent/exename.cc" />
 		<Unit filename="src/module/agent/factory.cc" />
 		<Unit filename="src/module/agent/private.h" />
+		<Unit filename="src/module/agent/state.cc" />
 		<Unit filename="src/module/controller/controller.cc" />
 		<Unit filename="src/module/controller/init.cc" />
 		<Unit filename="src/module/controller/load.cc" />

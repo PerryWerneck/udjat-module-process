@@ -60,7 +60,17 @@
 			/// @brief Mutex for serialization.
 			static std::recursive_mutex guard;
 
-			/// @brief CPU 'Ticks'
+			//
+			// Note:
+			//
+			// Required data per process:
+			//
+			// CPU Use in % of total.		OK
+			// Memory Use in % of total.
+			// Swap use in % of total.
+			//
+
+			/// @brief CPU Usage in %.
 			struct {
 				float percent = 0;			///< @brief CPU usage on last check.
 				unsigned long last = 0;		///< @brief utime+stime got in the last refresh.

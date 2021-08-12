@@ -17,40 +17,36 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
- #include <config.h>
- #include <udjat/defs.h>
- #include <udjat/process/agent.h>
- #include <udjat/state.h>
-
- using namespace std;
+ #include "private.h"
 
  namespace Udjat {
 
-	namespace Process {
+	class ProcessState : public Process::Agent::State {
+	private:
 
-		class Agent::State : public Udjat::Abstract::State {
-		public:
-			State(const pugi::xml_node &node) : Udjat::Abstract::State(node) {
-			}
+	public:
+		ProcessState(const char *state, const pugi::xml_node &node) : Process::Agent::State(node) {
+		}
 
-			virtual bool test(const Process::Agent &agent) const noexcept = 0;
+		bool test(const Process::Agent &agent) const noexcept override {
+		}
 
-		};
 
-		/// @brief Monitor process by exename
-		class ExeNameAgent : public Process::Agent {
-		private:
+	};
 
-			/// @brief The name of the process to monitor.
-			const char *exename;
+	void Process::Agent::append_state(const pugi::xml_node &node) {
 
-		public:
-			ExeNameAgent(const char *exename, const pugi::xml_node &node);
+		pugi::xml_attribute attribute;
 
-			bool probe(const char *exename) const noexcept override;
 
-		};
+		// Agent state by process
+		attribute = node.attribute("process-state");
+		if(attribute) {
+			states.push_back(make_shared<ProcessState>(attribute.as_string(),node));
+			return;
+		}
 
 	}
+
 
  }

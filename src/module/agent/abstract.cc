@@ -91,5 +91,19 @@
 		updated(true);
 	}
 
+	std::shared_ptr<Abstract::State> Process::Agent::stateFromValue() const {
+
+		for(auto state : this->states) {
+			if(state->test(*this))
+				return state;
+		}
+
+		return Abstract::Agent::stateFromValue();
+
+	}
+
+	bool Process::Agent::hasStates() const noexcept {
+		return !states.empty();
+	}
 
  }
