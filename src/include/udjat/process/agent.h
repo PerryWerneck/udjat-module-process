@@ -73,6 +73,29 @@
 
 			Process::Identifier::State getState() const noexcept;
 
+			float getCPU() const noexcept;
+
+			/// @brief The size of memory that are currently resident in RAM in bytes.
+			unsigned long long getRSS() const;
+
+			/// @brief Virtual memory size in bytes.
+			unsigned long long getVSize() const;
+
+			/// @brief The amount of resident memory that is shared with other processes.
+			unsigned long long getShared() const;
+
+			/// @brief Field types.
+			enum Field : uint8_t {
+				Rss,	///< @brief The size of memory that are currently resident in RAM in bytes.
+				VSize,	///< @brief Virtual memory size in bytes.
+				Shared	///< @brief The amount of resident memory that is shared with other processes.
+			};
+
+			static const char * fieldNames[];
+			static Field getField(const char *name);
+
+			unsigned long long get(Field field) const;
+
  		};
 
  	}

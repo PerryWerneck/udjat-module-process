@@ -268,7 +268,9 @@
 	}
 
 	void Process::Identifier::Stat::get(Udjat::Value &value) const {
-		value["vsize"] = vsize;
+		value["vsize"] = getVSize();
+		value["rss"] = getRSS();
+		value["shared"] = getShared();
 		value["mode"] = Process::Identifier::getStateName((Process::Identifier::State) state).name;
 	}
 
@@ -365,5 +367,18 @@
 		}
 
 	}
+
+	unsigned long long Process::Identifier::Stat::getRSS() const {
+
+		// https://stackoverflow.com/questions/669438/how-to-get-memory-usage-at-runtime-using-c
+		unsigned long long pgsize = sysconf(_SC_PAGE_SIZE);
+		return ((unsigned long long) rss) * pgsize;
+
+	}
+
+	unsigned long long Process::Identifier::Stat::getShared() const {
+		throw system_error(ENOTSUP, system_category(),"Shared memory by process is not implemented");
+	}
+
 
  }

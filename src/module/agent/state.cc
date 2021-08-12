@@ -53,6 +53,22 @@
 
 	};
 
+	/// @brief State by process usage in %
+	class ProcessUsage : public Process::Agent::State {
+	protected:
+		float from, to;
+
+		bool compare(float value) const noexcept {
+			return value >= from && value <= to;
+		}
+
+	public:
+		ProcessUsage(const pugi::xml_node &node) : Process::Agent::State(node) {
+			parse_range(node,from,to);
+		}
+
+	};
+
 	void Process::Agent::append_state(const pugi::xml_node &node) {
 
 		pugi::xml_attribute attribute;
@@ -72,13 +88,32 @@
 			return;
 		}
 
-		// Agent state by CPU Use
+		attribute = node.attribute("field-name");
+		if(attribute) {
+			Process::Agent::Field field = Process::Agent::getField(attribute.as_string(Process::Agent::fieldNames[0]));
 
+			/// @brief State based on field value.
+			class Value : public Process::Agent::State {
+			private:
+				Process::Agent::Field field;
+				unsigned long long from = 0;
+				unsigned long long to = 0;
 
-		// Agent state by Memory Use
+			public:
+				Value(Process::Agent::Field f, const pugi::xml_node &node) : Process::Agent::State(node), field(f) {
+					parse_byte_range(node,from,to);
+				}
 
+				bool test(const Process::Agent &agent) const noexcept override {
+					unsigned long long value = agent.get(field);
+					return value >= from && value <= to;
+				}
 
-		// Agent state by swap use.
+			};
+
+			states.push_back(make_shared<Value>(field, node));
+
+		}
 
 	}
 

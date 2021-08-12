@@ -129,7 +129,7 @@
 				long 				itrealvalue = 0;	///< @brief The time in jiffies before the next SIGALRM is sent
 				unsigned long long	starttime = 0;		///< @brief The time the process started after system boot.  In
 				unsigned long 		vsize = 0;			///< @brief Virtual memory size in bytes.
-				long				rss = 0;			///< @brief Resident Set Size: number of pages the process has
+				long				rss = 0;			///< @brief Resident Set Size: Number of pages that are currently resident in RAM
 				unsigned long 		rsslim = 0;			///< @brief Current soft limit in bytes on the rss of the
 				unsigned long 		startcode = 0;		///< @brief The address above which program text can run.
 				unsigned long 		endcode = 0;		///< @brief The address below which program text can run.
@@ -165,6 +165,17 @@
 
 				void get(Udjat::Value &value) const;
 
+				/// @brief The size of memory that are currently resident in RAM in bytes.
+				unsigned long long getRSS() const;
+
+				/// @brief Virtual memory size in bytes.
+				unsigned long long getVSize() const {
+					return (unsigned long long) vsize;
+				}
+
+				/// @brief The amount of resident memory that is shared with other processes.
+				unsigned long long getShared() const;
+
 			};
 
 			constexpr bool operator==(const pid_t pid) const {
@@ -182,6 +193,11 @@
 			std::string exename() const;
 
 			State getState();
+
+			/// @brief Get CPU usage in %.
+			float getCPU() const {
+				return (this->cpu.percent * 100);
+			}
 
 		};
 

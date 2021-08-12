@@ -22,6 +22,25 @@
 
  namespace Udjat {
 
+	const char * Process::Agent::fieldNames[] = {
+		"rss",
+		"VSize",
+		"Shared"
+	};
+
+	Process::Agent::Field Process::Agent::getField(const char *name) {
+
+		for(size_t ix = 0; ix < N_ELEMENTS(fieldNames); ix++) {
+
+			if(!strcasecmp(name,fieldNames[ix])) {
+				return (Process::Agent::Field) ix;
+			}
+
+		}
+
+		throw system_error(EINVAL, system_category(),"Invalid field name");
+	}
+
 	Process::Agent::Agent() {
 	}
 
@@ -122,5 +141,61 @@
 	bool Process::Agent::hasStates() const noexcept {
 		return !states.empty();
 	}
+
+	float Process::Agent::getCPU() const noexcept {
+
+		if(pid) {
+			return pid->getCPU();
+		}
+
+		return 0;
+	}
+
+	unsigned long long Process::Agent::getRSS() const {
+		if(!pid) {
+			return 0;
+		}
+		return Identifier::Stat(pid).getRSS();
+	}
+
+	unsigned long long Process::Agent::getVSize() const {
+		if(!pid) {
+			return 0;
+		}
+		return Identifier::Stat(pid).getVSize();
+	}
+
+	unsigned long long Process::Agent::getShared() const {
+		if(!pid) {
+			return 0;
+		}
+		return Identifier::Stat(pid).getShared();
+	}
+
+	unsigned long long Process::Agent::get(Field field) const {
+
+		if(!pid) {
+			return 0;
+		}
+
+		Identifier::Stat stat(pid);
+
+		switch(field) {
+		case Rss:
+			return stat.getRSS();
+
+		case VSize:
+			return stat.getVSize();
+
+		case Shared:
+			return stat.getShared();
+
+		default:
+			throw runtime_error("Unexpected field id");
+		}
+
+
+	}
+
 
  }
