@@ -33,6 +33,9 @@
 		}
 
 		bool test(const Process::Agent &agent) const noexcept override {
+#ifdef DEBUG
+			agent.info("State={} mine={}",agent.getState(),state);
+#endif // DEBUG
 			return agent.getState() == state;
 		}
 
@@ -41,14 +44,19 @@
 	/// @brief Agent state based on process availability.
 	class ProcessAvailable : public Process::Agent::State {
 	private:
+		bool required;
 
 	public:
-		ProcessAvailable(const pugi::xml_node &node) : Process::Agent::State(node) {
+		ProcessAvailable(bool r, const pugi::xml_node &node) : Process::Agent::State(node), required(r) {
 		}
 
 		bool test(const Process::Agent &agent) const noexcept override {
 			auto state = agent.getState();
-			return state != Pid::Dead && state != Pid::DeadCompat && state != Pid::Zombie && state != Pid::Stopped;
+			bool available = (state != Pid::Dead && state != Pid::DeadCompat && state != Pid::Zombie && state != Pid::Stopped);
+#ifdef DEBUG
+			agent.info("State={} available={}",agent.getState(),(available ? "yes" : "no"));
+#endif // DEBUG
+			return available == required;
 		}
 
 	};
@@ -80,10 +88,12 @@
 
 			const char *attr = attribute.as_string();
 
-			if(strcasecmp(attr,"available")) {
-				states.push_back(make_shared<ProcessState>(attribute.as_string(),node));
+			if(strcasecmp(attr,"available") == 0) {
+				states.push_back(make_shared<ProcessAvailable>(true,node));
+			} else if(strcasecmp(attr,"not-available") == 0) {
+				states.push_back(make_shared<ProcessAvailable>(false,node));
 			} else {
-				states.push_back(make_shared<ProcessAvailable>(node));
+				states.push_back(make_shared<ProcessState>(attribute.as_string(),node));
 			}
 			return;
 		}
@@ -117,5 +127,18 @@
 
 	}
 
+	std::shared_ptr<Abstract::State> Process::Agent::stateFromValue() const {
+
+		for(auto state : this->states) {
+			if(state->test(*this))
+				return state;
+		}
+
+#ifdef DEBUG
+		info("Using state {}","default");
+#endif // DEBUG
+		return Abstract::Agent::stateFromValue();
+
+	}
 
  }

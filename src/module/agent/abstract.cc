@@ -82,9 +82,14 @@
 
 	void Process::Agent::start() {
 #ifdef DEBUG
-		info("{}","starting");
+		info("Starting states={}",states.size());
 #endif // DEBUG
 		Process::Controller::getInstance().insert(this);
+
+		if(!pid) {
+			updated(true);
+		}
+
 	}
 
 	void Process::Agent::get(const Request &request, Response &response) {
@@ -123,17 +128,6 @@
 
 		// Mark as updated and changed.
 		updated(true);
-	}
-
-	std::shared_ptr<Abstract::State> Process::Agent::stateFromValue() const {
-
-		for(auto state : this->states) {
-			if(state->test(*this))
-				return state;
-		}
-
-		return Abstract::Agent::stateFromValue();
-
 	}
 
 	bool Process::Agent::hasStates() const noexcept {
