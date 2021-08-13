@@ -102,12 +102,15 @@
 			void get(Udjat::Value &value) const;
 
 			/// @brief Data from /proc/pid/stat.
-			/// https://www.kernel.org/doc/html/latest/filesystems/proc.html
 			class UDJAT_API Stat {
 			private:
 				void set(pid_t pid);
 
 			public:
+
+				// https://www.kernel.org/doc/html/latest/filesystems/proc.html
+				// https://stackoverflow.com/questions/39066998/what-are-the-meaning-of-values-at-proc-pid-stat
+
 				char 				state = 'X';		///< @brief Process state.
 				int 				ppid = 0;			///< @brief The PID of the parent of this process.
 				int 				pgrp = 0;			///< @brief The process group ID of the process.
@@ -115,21 +118,21 @@
 				int 				tty_nr = 0;			///< @brief The controlling terminal of the process.  (The minor
 				int 				tpgid = 0;			///< @brief The ID of the foreground process group of the
 				unsigned int 		flags = 0;			///< @brief The kernel flags word of the process.  For bit
-				unsigned long 		minflt = 0;			///< @brief The number of minor faults the process has made
-				unsigned long 		cminflt = 0;		///< @brief The number of minor faults that the process's
-				unsigned long 		majflt = 0;			///< @brief The number of major faults the process has made
-				unsigned long 		cmajflt = 0;		///< @brief The number of major faults that the process's
+				unsigned long 		minflt = 0;			///< @brief The number of minor faults the process has made which have not required loading a memory page from disk.
+				unsigned long 		cminflt = 0;		///< @brief The number of minor faults that the process's waited-for children have made.
+				unsigned long 		majflt = 0;			///< @brief The number of major faults the process has made which have required loading a memory page from disk.
+				unsigned long 		cmajflt = 0;		///< @brief The number of major faults that the process's waited-for children have made.
 				unsigned long 		utime = 0;			///< @brief Amount of time that this process has been scheduled.
 				unsigned long 		stime = 0;			///< @brief Amount of time that this process has been scheduled
-				long				cutime = 0;			///< @brief Amount of time that this process's waited-for
-				long				cstime = 0;			///< @brief Amount of time that this process's waited-for
+				long				cutime = 0;			///< @brief Amount of time that this process's waited-for children have been scheduled in user mode
+				long				cstime = 0;			///< @brief Amount of time that this process's waited-for children have been scheduled in kernel mode
 				long				priority = 0;		///< @brief (Explanation for Linux 2.6) For processes running a
 				long				nice = 0;			///< @brief The nice value (see setpriority(2)), a value in the
 				long				num_threads = 0;	///< @brief Number of threads in this process (since Linux 2.6).
 				long 				itrealvalue = 0;	///< @brief The time in jiffies before the next SIGALRM is sent
 				unsigned long long	starttime = 0;		///< @brief The time the process started after system boot.  In
 				unsigned long 		vsize = 0;			///< @brief Virtual memory size in bytes.
-				long				rss = 0;			///< @brief Resident Set Size: Number of pages that are currently resident in RAM
+				long				rss = 0;			///< @brief Resident Set Size: Number of pages that are currently resident in RAM.
 				unsigned long 		rsslim = 0;			///< @brief Current soft limit in bytes on the rss of the
 				unsigned long 		startcode = 0;		///< @brief The address above which program text can run.
 				unsigned long 		endcode = 0;		///< @brief The address below which program text can run.

@@ -94,7 +94,11 @@
 			static const char * fieldNames[];
 			static Field getField(const char *name);
 
-			unsigned long long get(Field field) const;
+			/// @brief Get field value in bytes.
+			unsigned long long getValue(Field field) const;
+
+			/// @brief Get field value in % of the system total.
+			float getPercent(Field field) const;
 
  		};
 

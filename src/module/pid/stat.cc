@@ -270,7 +270,7 @@
 	void Process::Identifier::Stat::get(Udjat::Value &value) const {
 		value["vsize"] = getVSize();
 		value["rss"] = getRSS();
-		value["shared"] = getShared();
+//		value["shared"] = getShared();
 		value["mode"] = Process::Identifier::getStateName((Process::Identifier::State) state).name;
 	}
 

@@ -105,7 +105,7 @@
 				}
 
 				bool test(const Process::Agent &agent) const noexcept override {
-					unsigned long long value = agent.get(field);
+					unsigned long long value = agent.getValue(field);
 					return value >= from && value <= to;
 				}
 

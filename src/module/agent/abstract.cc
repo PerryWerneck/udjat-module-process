@@ -19,6 +19,7 @@
 
  #include "private.h"
  #include <controller.h>
+ #include <udjat/tools/system/info.h>
 
  namespace Udjat {
 
@@ -97,9 +98,6 @@
 			Identifier::Stat().get(response);
 		}
 
-		//response["vsize"] = stat.vsize;
-		//response["mode"] = Identifier::getStateName(getState()).name;
-
 	}
 
 	/*
@@ -172,7 +170,7 @@
 		return Identifier::Stat(pid).getShared();
 	}
 
-	unsigned long long Process::Agent::get(Field field) const {
+	unsigned long long Process::Agent::getValue(Field field) const {
 
 		if(!pid) {
 			return 0;
@@ -194,8 +192,62 @@
 			throw runtime_error("Unexpected field id");
 		}
 
-
 	}
 
+	float Process::Agent::getPercent(Field field) const {
+
+		if(!pid) {
+			return 0;
+		}
+
+		Identifier::Stat stat(pid);
+
+		switch(field) {
+		case Rss:
+
+			// RSS - Return resident pages / totalram.
+			{
+				float value = (float) stat.getRSS();
+
+				if(value > 0) {
+					return  value / ((float) Udjat::System::Info().totalram);
+				}
+
+			}
+			break;
+
+		case VSize:
+
+			// VSize - Return APP VSize / (totalram + totalswap)
+			{
+				Udjat::System::Info info;
+				float value = (float) stat.getVSize();
+
+				if(value > 0) {
+					return value / ((float) (info.totalram + info.totalswap));
+				}
+			}
+			break;
+
+		case Shared:
+
+			// Shared  - Return APP Shared / totalshared
+			{
+				float value = (float) stat.getShared();
+
+				if(value > 0) {
+					return  value / ((float) Udjat::System::Info().sharedram);
+				}
+
+			}
+			break;
+
+		default:
+			throw runtime_error("Unexpected field id");
+		}
+
+		return 0;
+
+	}
 
  }
