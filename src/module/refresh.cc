@@ -24,6 +24,7 @@
  #include <sys/stat.h>
  #include <fcntl.h>
  #include <udjat/tools/system/stat.h>
+ #include <udjat/tools/threadpool.h>
 
  using namespace std;
 
@@ -129,9 +130,11 @@
 			}
 
 			// Update agents.
-			for(auto agent : agents) {
-				agent->refresh(true);
-			}
+			ThreadPool::getInstance().push([this]() {
+				for(auto agent : agents) {
+					agent->updated(true);
+				}
+			});
 
 		} catch(const exception &e) {
 
