@@ -91,6 +91,22 @@
 
 	}
 
+	Process::Identifier * Process::Controller::find(const pid_t pid) {
+
+		lock_guard<recursive_mutex> lock(guard);
+
+		for(auto it = identifiers.begin(); it != identifiers.end(); it++) {
+
+			if(it->getPid() == pid) {
+				return &(*it);
+			}
+
+		}
+
+
+		throw system_error(ENOENT, system_category(),string{"Can't find pid '"} + std::to_string(pid) + "'");
+	}
+
 	void Process::Controller::Controller::insert(pid_t pid) noexcept {
 
 		lock_guard<recursive_mutex> lock(guard);

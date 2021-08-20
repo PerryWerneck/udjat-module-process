@@ -44,6 +44,10 @@
 			Agent();
 			Agent(const pugi::xml_node &node);
 
+			inline const Identifier * getPid() const noexcept {
+				return this->pid;
+			}
+
 			void start() override;
 
 			/// @brief Test if the identifier exename match the agent.
@@ -59,6 +63,9 @@
 			virtual void setIdentifier(Identifier *info);
 
 			std::shared_ptr<Abstract::State> stateFromValue() const override;
+
+			/// @brief Set process pid.
+			void set(const pid_t pid);
 
 		public:
 

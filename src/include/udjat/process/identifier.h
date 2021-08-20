@@ -193,6 +193,10 @@
 				return this->pid;
 			}
 
+			inline pid_t getPid() const noexcept {
+				return this->pid;
+			}
+
 			std::string exename() const;
 
 			State getState();

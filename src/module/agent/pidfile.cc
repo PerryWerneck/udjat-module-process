@@ -18,36 +18,49 @@
  */
 
  #include "private.h"
- #include <udjat/tools/xml.h>
- #include <udjat/tools/quark.h>
+ #include <unistd.h>
+ #include <iostream>
+ #include <fstream>
 
  namespace Udjat {
 
-	bool Process::Agent::factory(Abstract::Agent &parent, const pugi::xml_node &node) {
+	Process::PidFileAgent::PidFileAgent(const char *filename, const pugi::xml_node &node) : Process::Agent(node), pidfile(filename) {
+	}
 
-		// Process by exename
-		{
-			const char *exename = Attribute(node,"exename").as_string();
-
-			if(exename && *exename) {
-				parent.insert(make_shared<ExeNameAgent>(Quark(exename).c_str(), node));
-				return true;
-			}
-
-		}
-
-		// Process by pidfile
-		{
-			const char *pidfile = Attribute(node,"pidfile").as_string();
-
-			if(pidfile && *pidfile) {
-				parent.insert(make_shared<PidFileAgent>(Quark(pidfile).c_str(), node));
-				return true;
-			}
-
-		}
-
+	bool Process::PidFileAgent::probe(const char UDJAT_UNUSED(*exename)) const noexcept {
 		return false;
+	}
+
+	void Process::PidFileAgent::start() {
+		refresh();
+	}
+
+	bool Process::PidFileAgent::refresh() {
+
+		if(!getPid()) {
+
+			// Check for pidfile.
+			if(access(pidfile,R_OK) == 0) {
+
+				ifstream pf;
+				pf.open(pidfile);
+
+				// Found pidfile, read it!
+				unsigned int pid = 0;
+				pf >> pid;
+				pf.close();
+
+				if(pid) {
+					info("Got '{}' from '{}'",pid,pidfile);
+					set((pid_t) pid);
+				}
+
+			}
+
+		}
+
+
+		return Process::Agent::refresh();
 	}
 
  }

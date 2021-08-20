@@ -51,6 +51,23 @@
 
 		};
 
+		/// @brief Monitor process by exename
+		class PidFileAgent : public Process::Agent {
+		private:
+
+			/// @brief The pidfile to monitor.
+			const char *pidfile;
+
+		public:
+			PidFileAgent(const char *filename, const pugi::xml_node &node);
+
+			void start() override;
+			bool refresh() override;
+			bool probe(const char *exename) const noexcept override;
+
+
+		};
+
 	}
 
  }

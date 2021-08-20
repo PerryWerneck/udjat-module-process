@@ -81,6 +81,8 @@
 				return system.cpu;
 			}
 
+			Identifier * find(const pid_t pid);
+
 		};
 
 	}
