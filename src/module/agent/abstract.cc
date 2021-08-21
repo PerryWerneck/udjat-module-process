@@ -92,15 +92,6 @@
 
 	}
 
-	void Process::Agent::set(const pid_t pid) {
-		this->pid = Process::Controller::getInstance().find(pid);
-#ifdef DEBUG
-		if(this->pid) {
-			info("Exename is '{}'",this->pid->exename());
-		}
-#endif // DEBUG
-	}
-
 	void Process::Agent::get(const Request &request, Response &response) {
 
 		super::get(request,response);
@@ -120,7 +111,17 @@
 	}
 	*/
 
-	void Process::Agent::setIdentifier(Identifier *pid) {
+	void Process::Agent::set(const pid_t pid) {
+
+		if(pid < 0) {
+			set((Identifier *) nullptr);
+		} else {
+			set(Process::Controller::getInstance().find(pid));
+		}
+
+	}
+
+	void Process::Agent::set(Identifier *pid) {
 
 		if(pid == this->pid) {
 			return;

@@ -57,7 +57,7 @@
 
 		for(auto identifier = identifiers.begin(); identifier != identifiers.end(); identifier++) {
 			if(agent->probe(*identifier)) {
-				agent->setIdentifier(&(*identifier));
+				agent->set(&(*identifier));
 				break;
 			}
 		}
@@ -84,7 +84,7 @@
 		for(auto agent : agents) {
 
 			if(!agent->pid && agent->probe(exec.c_str())) {
-				agent->setIdentifier(&identifier);
+				agent->set(&identifier);
 			}
 
 		}
@@ -103,8 +103,8 @@
 
 		}
 
+		return nullptr;
 
-		throw system_error(ENOENT, system_category(),string{"Can't find pid '"} + std::to_string(pid) + "'");
 	}
 
 	void Process::Controller::Controller::insert(pid_t pid) noexcept {
@@ -135,7 +135,7 @@
 				if(e == pid) {
 					for(auto agent : agents) {
 						if(agent->pid == &e) {
-							agent->setIdentifier(nullptr);
+							agent->set( (Identifier *) nullptr);
 						}
 					}
 					return true;
