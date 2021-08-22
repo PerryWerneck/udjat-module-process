@@ -21,6 +21,7 @@
 
  #include <udjat/defs.h>
  #include <udjat/process/agent.h>
+ #include <udjat/process/identifier.h>
  #include <mutex>
  #include <list>
 
@@ -76,6 +77,8 @@
 
 			void insert(Agent *agent);
 			void remove(Agent *agent);
+
+			size_t count(const Process::Identifier::State state);
 
 			inline float getSystemCpuUse() const noexcept {
 				return system.cpu;

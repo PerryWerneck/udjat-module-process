@@ -189,6 +189,10 @@
 				return this->pid == entry.pid;
 			}
 
+			constexpr bool operator==(const State &state) const {
+				return this->state == state;
+			}
+
 			operator pid_t() const {
 				return this->pid;
 			}

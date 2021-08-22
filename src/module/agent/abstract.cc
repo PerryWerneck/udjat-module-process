@@ -45,8 +45,7 @@
 	Process::Agent::Agent() {
 	}
 
-	Process::Agent::Agent(const pugi::xml_node &node) : Agent() {
-		load(node);
+	Process::Agent::Agent(const pugi::xml_node &node) : Abstract::Agent(node) {
 	}
 
 	Process::Agent::~Agent() {

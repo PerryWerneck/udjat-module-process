@@ -20,6 +20,7 @@
  #include <udjat.h>
  #include <udjat/module.h>
  #include <unistd.h>
+ #include <udjat/tools/mainloop.h>
 
  using namespace std;
  using namespace Udjat;
@@ -33,6 +34,7 @@
 	auto module = udjat_module_init();
 	auto agent = Abstract::Agent::init("${PWD}/test.xml");
 
+	/*
 	try {
 
 		Module::load("http");
@@ -46,8 +48,14 @@
 		cerr << e.what() << endl;
 
 	}
+	*/
 
 	cout << "Waiting for requests" << endl;
+
+	Udjat::MainLoop::getInstance().insert(NULL,1000L,[](){
+		cout << "Tick!" << endl;
+		return true;
+	});
 
 	Udjat::run();
 

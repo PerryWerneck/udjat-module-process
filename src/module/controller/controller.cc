@@ -124,6 +124,22 @@
 
 	}
 
+	size_t Process::Controller::count(const Process::Identifier::State state) {
+
+		lock_guard<recursive_mutex> lock(guard);
+		size_t rc = 0;
+
+		for(auto identifier = identifiers.begin(); identifier != identifiers.end(); identifier++) {
+
+			if(*identifier == state) {
+				rc++;
+			}
+
+		}
+
+		return rc;
+	}
+
 	void Process::Controller::Controller::remove(pid_t pid) noexcept {
 
 		try {

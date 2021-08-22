@@ -43,6 +43,7 @@
 		<Unit filename="src/include/udjat/process/agent.h" />
 		<Unit filename="src/include/udjat/process/identifier.h" />
 		<Unit filename="src/module/agent/abstract.cc" />
+		<Unit filename="src/module/agent/counter.cc" />
 		<Unit filename="src/module/agent/exename.cc" />
 		<Unit filename="src/module/agent/factory.cc" />
 		<Unit filename="src/module/agent/pidfile.cc" />

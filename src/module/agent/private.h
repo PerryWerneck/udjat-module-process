@@ -68,6 +68,17 @@
 
 		};
 
+		/// @brief State counter
+		class StateCounterAgent : public Udjat::Agent<unsigned int> {
+		private:
+			Process::Identifier::State state;
+
+		public:
+			StateCounterAgent(const char *statename, const pugi::xml_node &node);
+			bool refresh() override;
+			void start() override;
+
+		};
 	}
 
  }

@@ -18,47 +18,20 @@
  */
 
  #include "private.h"
- #include <udjat/tools/xml.h>
- #include <udjat/tools/quark.h>
+ #include <controller.h>
 
  namespace Udjat {
 
-	bool Process::Agent::factory(Abstract::Agent &parent, const pugi::xml_node &node) {
+	Process::StateCounterAgent::StateCounterAgent(const char *statename, const pugi::xml_node &node) : Udjat::Agent<unsigned int>(node), state(Process::Identifier::getState(statename)) {
+	}
 
-		// Process by exename
-		{
-			const char *exename = Attribute(node,"exename").as_string();
+	void Process::StateCounterAgent::start() {
+		refresh();
+		super::start();
+	}
 
-			if(exename && *exename) {
-				parent.insert(make_shared<ExeNameAgent>(Quark(exename).c_str(), node));
-				return true;
-			}
-
-		}
-
-		// Process by pidfile
-		{
-			const char *pidfile = Attribute(node,"pidfile").as_string();
-
-			if(pidfile && *pidfile) {
-				parent.insert(make_shared<PidFileAgent>(Quark(pidfile).c_str(), node));
-				return true;
-			}
-
-		}
-
-		// State counter.
-		{
-			const char *state = Attribute(node,"process-state").as_string();
-
-			if(state && *state) {
-				parent.insert(make_shared<StateCounterAgent>(state, node));
-				return true;
-			}
-
-		}
-
-		return false;
+	bool Process::StateCounterAgent::refresh() {
+		return set(Process::Controller::getInstance().count(state));
 	}
 
  }
