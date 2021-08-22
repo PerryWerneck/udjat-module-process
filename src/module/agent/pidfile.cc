@@ -25,6 +25,7 @@
  namespace Udjat {
 
 	Process::PidFileAgent::PidFileAgent(const char *filename, const pugi::xml_node &node) : Process::Agent(node), pidfile(filename) {
+		load(node);
 	}
 
 	bool Process::PidFileAgent::probe(const char UDJAT_UNUSED(*exename)) const noexcept {
