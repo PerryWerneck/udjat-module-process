@@ -34,7 +34,6 @@
 	auto module = udjat_module_init();
 	auto agent = Abstract::Agent::init("${PWD}/test.xml");
 
-	/*
 	try {
 
 		Module::load("http");
@@ -48,7 +47,6 @@
 		cerr << e.what() << endl;
 
 	}
-	*/
 
 	cout << "Waiting for requests" << endl;
 
