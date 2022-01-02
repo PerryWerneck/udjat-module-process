@@ -55,7 +55,7 @@
 		return true;
 	});
 
-	Udjat::run();
+	Udjat::MainLoop::getInstance().run();
 
 	Abstract::Agent::deinit();
 
