@@ -21,6 +21,7 @@
 
  #include <udjat/tools/systemservice.h>
  #include <udjat/tools/application.h>
+ #include <udjat/tools/logger.h>
  #include <udjat/agent.h>
  #include <udjat/factory.h>
  #include <udjat/module.h>
@@ -42,7 +43,7 @@ int main(int argc, char **argv) {
 
 			udjat_module_init();
 
-			auto root = Abstract::Agent::init("*.xml");
+			auto root = Udjat::init("test.xml");
 
 			cout << "http://localhost:8989/api/1.0/info/modules.xml" << endl;
 			cout << "http://localhost:8989/api/1.0/info/workers.xml" << endl;
@@ -67,6 +68,7 @@ int main(int argc, char **argv) {
 
 	};
 
+	Logger::redirect();
 	return Service().run(argc,argv);
 
 
