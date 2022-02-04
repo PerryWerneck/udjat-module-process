@@ -52,7 +52,7 @@
 				pf.close();
 
 				if(pid) {
-					info("Got '{}' from '{}'",pid,pidfile);
+					info() << "Got '" << pid << "' from '" << pidfile << "'" << endl;
 					set((pid_t) pid);
 				}
 

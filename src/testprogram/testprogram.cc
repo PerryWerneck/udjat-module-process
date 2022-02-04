@@ -17,59 +17,43 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
- #include <config.h>
-
- #include <udjat/tools/systemservice.h>
- #include <udjat/tools/application.h>
- #include <udjat/tools/logger.h>
- #include <udjat/agent.h>
- #include <udjat/factory.h>
  #include <udjat/module.h>
- #include <iostream>
- #include <memory>
+ #include <unistd.h>
+ #include <udjat/tools/mainloop.h>
+ #include <udjat/tools/url.h>
 
  using namespace std;
  using namespace Udjat;
 
-//---[ Implement ]------------------------------------------------------------------------------------------
+ int main(int argc, char **argv) {
 
-int main(int argc, char **argv) {
+	setlocale( LC_ALL, "" );
 
-	class Service : public SystemService {
-	protected:
-		/// @brief Initialize service.
-		void init() override {
-			cout << Application::Name() << "\tInitializing" << endl;
+	Logger::redirect(nullptr,true);
 
-			udjat_module_init();
+	auto module = udjat_module_init();
+	auto agent = Udjat::load("./test.xml");
 
-			auto root = Udjat::init("test.xml");
+	if(Module::find("httpd")) {
 
-			cout << "http://localhost:8989/api/1.0/info/modules.xml" << endl;
-			cout << "http://localhost:8989/api/1.0/info/workers.xml" << endl;
-			cout << "http://localhost:8989/api/1.0/info/factories.xml" << endl;
-			cout << "http://localhost:8989/api/1.0/agent.xml" << endl;
+		cout << "http://localhost:8989/api/1.0/info/modules.xml" << endl;
+		cout << "http://localhost:8989/api/1.0/info/protocols.xml" << endl;
 
-			for(auto agent : *root) {
-				cout << "http://localhost:8989/api/1.0/agent/" << agent->getName() << ".xml" << endl;
-			}
-
+		for(auto child : *agent) {
+			cout << "http://localhost:8989/api/1.0/agent/" << child->name() << ".xml" << endl;
 		}
 
-		/// @brief Deinitialize service.
-		void deinit() override {
-			cout << Application::Name() << "\tDeinitializing" << endl;
-			Udjat::Module::unload();
-		}
+	}
 
-	public:
-		Service() = default;
+	cout << "Waiting for requests" << endl;
 
+	Udjat::MainLoop::getInstance().run();
 
-	};
+	Abstract::Agent::deinit();
 
-	Logger::redirect();
-	return Service().run(argc,argv);
+	cout << "Removing module" << endl;
+	delete module;
+	Module::unload();
 
-
+	return 0;
 }

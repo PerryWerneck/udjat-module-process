@@ -34,7 +34,7 @@
 
 		bool test(const Process::Agent &agent) const noexcept override {
 #ifdef DEBUG
-			agent.info("State={} mine={}",agent.getState(),state);
+			agent.info() << "State=" << agent.getState() << " mine=" << state << endl;
 #endif // DEBUG
 			return agent.getState() == state;
 		}
@@ -54,7 +54,7 @@
 			auto state = agent.getState();
 			bool available = (state != Pid::Dead && state != Pid::DeadCompat && state != Pid::Zombie && state != Pid::Stopped);
 #ifdef DEBUG
-			agent.info("State={} available={}",agent.getState(),(available ? "yes" : "no"));
+			agent.info() << "State=" << agent.getState() << " available=" << (available ? "yes" : "no") << endl;
 #endif // DEBUG
 			return available == required;
 		}
@@ -135,7 +135,7 @@
 		}
 
 #ifdef DEBUG
-		info("Using state {}","default");
+		info() << "Using default state" << endl;
 #endif // DEBUG
 		return Abstract::Agent::stateFromValue();
 
