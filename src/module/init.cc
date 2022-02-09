@@ -21,16 +21,11 @@
  #include <udjat/process/agent.h>
  #include <udjat/module.h>
  #include <udjat/factory.h>
+ #include <udjat/moduleinfo.h>
 
  using namespace std;
 
- static const Udjat::ModuleInfo moduleinfo{
-	PACKAGE_NAME,								// The module name.
-	"Process information agents", 				// The module description.
-	PACKAGE_VERSION, 							// The module version.
-	PACKAGE_URL, 								// The package URL.
-	PACKAGE_BUGREPORT 							// The bug report address.
- };
+ static const Udjat::ModuleInfo moduleinfo{"Process information agents"};
 
  /// @brief Register udjat module.
  Udjat::Module * udjat_module_init() {
@@ -39,7 +34,7 @@
 	private:
 
 	public:
-		Module() : Udjat::Module("process",&moduleinfo), Factory("process",&moduleinfo) {
+		Module() : Udjat::Module("process",moduleinfo), Factory("process",moduleinfo) {
 		};
 
 		virtual ~Module() {
