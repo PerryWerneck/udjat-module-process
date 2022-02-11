@@ -23,15 +23,14 @@
 
  namespace Udjat {
 
-	bool Process::Agent::factory(Abstract::Agent &parent, const pugi::xml_node &node) {
+	std::shared_ptr<Abstract::Agent> Process::Agent::AgentFactory(const pugi::xml_node &node) {
 
 		// Process by exename
 		{
 			const char *exename = Attribute(node,"exename").as_string();
 
 			if(exename && *exename) {
-				parent.insert(make_shared<ExeNameAgent>(Quark(exename).c_str(), node));
-				return true;
+				return make_shared<ExeNameAgent>(Quark(exename).c_str(), node);
 			}
 
 		}
@@ -41,8 +40,7 @@
 			const char *pidfile = Attribute(node,"pidfile").as_string();
 
 			if(pidfile && *pidfile) {
-				parent.insert(make_shared<PidFileAgent>(Quark(pidfile).c_str(), node));
-				return true;
+				return make_shared<PidFileAgent>(Quark(pidfile).c_str(), node);
 			}
 
 		}
@@ -52,13 +50,12 @@
 			const char *state = Attribute(node,"process-state").as_string();
 
 			if(state && *state) {
-				parent.insert(make_shared<StateCounterAgent>(state, node));
-				return true;
+				return make_shared<StateCounterAgent>(state, node);
 			}
 
 		}
 
-		return false;
+		return std::shared_ptr<Abstract::Agent>();
 	}
 
  }

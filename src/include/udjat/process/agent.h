@@ -69,8 +69,7 @@
 			virtual void set(Identifier *info);
 
 		public:
-
-			static bool factory(Abstract::Agent &parent, const pugi::xml_node &node);
+			static std::shared_ptr<Udjat::Abstract::Agent> AgentFactory(const pugi::xml_node &node);
 
 			virtual ~Agent();
 

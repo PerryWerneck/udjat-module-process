@@ -18,6 +18,7 @@
  */
 
  #include <config.h>
+ #include <udjat/agent.h>
  #include <udjat/process/agent.h>
  #include <udjat/module.h>
  #include <udjat/factory.h>
@@ -40,9 +41,10 @@
 		virtual ~Module() {
 		}
 
-		bool parse(Udjat::Abstract::Agent &parent, const pugi::xml_node &node) const {
-			return Udjat::Process::Agent::factory(parent,node);
+		std::shared_ptr<Udjat::Abstract::Agent> AgentFactory(const pugi::xml_node &node) const override {
+			return Udjat::Process::Agent::AgentFactory(node);
 		}
+
 
 	};
 
