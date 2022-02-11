@@ -77,7 +77,8 @@
 			void get(const Request &request, Response &response) override;
 
 			bool hasStates() const noexcept override;
-			void append_state(const pugi::xml_node &node) override;
+
+			std::shared_ptr<Abstract::State> StateFactory(const pugi::xml_node &node) override;
 
 			Process::Identifier::State getState() const noexcept;
 

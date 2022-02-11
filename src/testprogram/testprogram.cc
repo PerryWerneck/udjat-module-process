@@ -29,7 +29,7 @@
 
 	setlocale( LC_ALL, "" );
 
-	Logger::redirect(nullptr,true);
+	Logger::redirect(true);
 
 	auto module = udjat_module_init();
 	Udjat::load("./test.xml");
