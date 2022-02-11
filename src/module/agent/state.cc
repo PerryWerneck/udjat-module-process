@@ -34,7 +34,7 @@
 
 		bool test(const Process::Agent &agent) const noexcept override {
 #ifdef DEBUG
-			agent.info("State={} mine={}",agent.getState(),state);
+			agent.info() << "State=" << agent.getState() << " mine=" << state << endl;
 #endif // DEBUG
 			return agent.getState() == state;
 		}
@@ -54,7 +54,7 @@
 			auto state = agent.getState();
 			bool available = (state != Pid::Dead && state != Pid::DeadCompat && state != Pid::Zombie && state != Pid::Stopped);
 #ifdef DEBUG
-			agent.info("State={} available={}",agent.getState(),(available ? "yes" : "no"));
+			agent.info() << "State=" << agent.getState() << " available=" << (available ? "yes" : "no") << endl;
 #endif // DEBUG
 			return available == required;
 		}
@@ -77,10 +77,11 @@
 
 	};
 
-	void Process::Agent::append_state(const pugi::xml_node &node) {
+	std::shared_ptr<Abstract::State> Process::Agent::StateFactory(const pugi::xml_node &node) {
+
+		std::shared_ptr<State> state;
 
 		pugi::xml_attribute attribute;
-
 
 		// Agent state by process
 		attribute = node.attribute("process-state");
@@ -89,13 +90,17 @@
 			const char *attr = attribute.as_string();
 
 			if(strcasecmp(attr,"available") == 0) {
-				states.push_back(make_shared<ProcessAvailable>(true,node));
+				state = make_shared<ProcessAvailable>(true,node);
 			} else if(strcasecmp(attr,"not-available") == 0) {
-				states.push_back(make_shared<ProcessAvailable>(false,node));
+				state = make_shared<ProcessAvailable>(false,node);
 			} else {
-				states.push_back(make_shared<ProcessState>(attribute.as_string(),node));
+				state = make_shared<ProcessState>(attribute.as_string(),node);
 			}
-			return;
+
+			if(state) {
+				states.push_back(state);
+				return state;
+			}
 		}
 
 		attribute = node.attribute("field-name");
@@ -121,10 +126,11 @@
 
 			};
 
-			states.push_back(make_shared<Value>(field, node));
+			return make_shared<Value>(field, node);
 
 		}
 
+		return state;
 	}
 
 	std::shared_ptr<Abstract::State> Process::Agent::stateFromValue() const {
@@ -135,7 +141,7 @@
 		}
 
 #ifdef DEBUG
-		info("Using state {}","default");
+		info() << "Using default state" << endl;
 #endif // DEBUG
 		return Abstract::Agent::stateFromValue();
 

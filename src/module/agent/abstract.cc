@@ -81,7 +81,7 @@
 
 	void Process::Agent::start() {
 #ifdef DEBUG
-		info("Starting states={}",states.size());
+		info() << "Starting states=" << states.size() << endl;
 #endif // DEBUG
 		Process::Controller::getInstance().insert(this);
 
@@ -130,9 +130,9 @@
 
 		// Notify state change.
 		if(pid) {
-			info("Detected on pid '{}'", ((pid_t) *pid));
+			info() << "Detected on pid '" << ((pid_t) *pid) << "'" << endl;
 		} else {
-			info("{}","Not available");
+			info() << "Not available" << endl;
 		}
 
 		// Mark as updated and changed.
