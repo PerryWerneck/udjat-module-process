@@ -60,7 +60,7 @@
 			/// @return true if the identifier match the agent requirements.
 			virtual bool probe(const Identifier &ident) const noexcept;
 
-			std::shared_ptr<Abstract::State> stateFromValue() const override;
+			std::shared_ptr<Abstract::State> computeState() override;
 
 			/// @brief Set process pid.
 			void set(const pid_t pid);

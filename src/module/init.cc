@@ -26,7 +26,7 @@
 
  using namespace std;
 
- static const Udjat::ModuleInfo moduleinfo{"Process information agents"};
+ static const Udjat::ModuleInfo moduleinfo{"Process information module"};
 
  /// @brief Register udjat module.
  Udjat::Module * udjat_module_init() {

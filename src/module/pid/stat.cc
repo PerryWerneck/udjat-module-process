@@ -271,7 +271,7 @@
 		value["vsize"] = getVSize();
 		value["rss"] = getRSS();
 //		value["shared"] = getShared();
-		value["mode"] = Process::Identifier::getStateName((Process::Identifier::State) state).name;
+		value["mode"] = Process::Identifier::StateNameFactory((Process::Identifier::State) state).name;
 	}
 
 	void Process::Identifier::Stat::set(pid_t pid) {

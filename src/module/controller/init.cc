@@ -74,7 +74,7 @@
 
 	Process::Controller::Controller() : Handler(-1,Handler::oninput) {
 
-		Logger::trace() << "Process controller is starting" << endl;
+		Logger::trace() << "PID Watcher is starting" << endl;
 
 		// Load pids
 		{
@@ -148,7 +148,7 @@
 				}
 
 				MainLoop::Handler::enable();
-				Logger::trace() << "Process watcher is active" << endl;
+				Logger::trace() << "PID Watcher is active" << endl;
 
 			} catch(const exception &e) {
 
@@ -180,7 +180,7 @@
 	}
 
 	Process::Controller::~Controller() {
-		Logger::trace() << "Process controller is stopping" << endl;
+		Logger::trace() << "PID watcher is stopping" << endl;
 		close();
 	}
 

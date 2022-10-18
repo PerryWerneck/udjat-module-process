@@ -19,6 +19,7 @@
 
  #include "private.h"
  #include <udjat/agent/state.h>
+ #include <udjat/tools/logger.h>
 
  using Pid = Udjat::Process::Identifier;
 
@@ -30,12 +31,12 @@
 		Process::Identifier state = Pid::Undefined;
 
 	public:
-		ProcessState(const char *s, const pugi::xml_node &node) : Process::Agent::State(node), state(Process::Identifier::getState(s)) {
+		ProcessState(const char *s, const pugi::xml_node &node) : Process::Agent::State(node), state(Process::Identifier::StateFactory(s)) {
 		}
 
 		bool test(const Process::Agent &agent) const noexcept override {
 #ifdef DEBUG
-			agent.info() << "State=" << agent.getState() << " mine=" << state << endl;
+			agent.trace() << "State=" << agent.getState() << " mine=" << state << endl;
 #endif // DEBUG
 			return agent.getState() == state;
 		}
@@ -55,7 +56,7 @@
 			auto state = agent.getState();
 			bool available = (state != Pid::Dead && state != Pid::DeadCompat && state != Pid::Zombie && state != Pid::Stopped);
 #ifdef DEBUG
-			agent.info() << "State=" << agent.getState() << " available=" << (available ? "yes" : "no") << endl;
+			agent.trace() << "State=" << agent.getState() << " available=" << (available ? "yes" : "no") << endl;
 #endif // DEBUG
 			return available == required;
 		}
@@ -134,17 +135,15 @@
 		return state;
 	}
 
-	std::shared_ptr<Abstract::State> Process::Agent::stateFromValue() const {
+	std::shared_ptr<Abstract::State> Process::Agent::computeState() {
 
 		for(auto state : this->states) {
 			if(state->test(*this))
 				return state;
 		}
 
-#ifdef DEBUG
-		info() << "Using default state" << endl;
-#endif // DEBUG
-		return Abstract::Agent::stateFromValue();
+		debug("Using default state");
+		return Abstract::Agent::computeState();
 
 	}
 
