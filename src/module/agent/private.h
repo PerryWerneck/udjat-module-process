@@ -20,7 +20,7 @@
  #include <config.h>
  #include <udjat/defs.h>
  #include <udjat/process/agent.h>
- #include <udjat/state.h>
+ #include <udjat/agent/state.h>
 
  using namespace std;
 

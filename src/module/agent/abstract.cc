@@ -139,9 +139,11 @@
 		updated(true);
 	}
 
+	/*
 	bool Process::Agent::hasStates() const noexcept {
 		return !states.empty();
 	}
+	*/
 
 	float Process::Agent::getCPU() const noexcept {
 

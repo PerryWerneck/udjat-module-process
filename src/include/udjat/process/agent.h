@@ -21,7 +21,7 @@
 
  #include <udjat/defs.h>
  #include <udjat/agent.h>
- #include <udjat/state.h>
+ #include <udjat/agent/state.h>
  #include <udjat/process/identifier.h>
 
  namespace Udjat {
@@ -75,7 +75,7 @@
 
 			void get(const Request &request, Response &response) override;
 
-			bool hasStates() const noexcept override;
+			// bool hasStates() const noexcept override;
 
 			std::shared_ptr<Abstract::State> StateFactory(const pugi::xml_node &node) override;
 

@@ -18,6 +18,7 @@
  */
 
  #include "private.h"
+ #include <udjat/agent/state.h>
 
  using Pid = Udjat::Process::Identifier;
 
@@ -72,7 +73,7 @@
 
 	public:
 		ProcessUsage(const pugi::xml_node &node) : Process::Agent::State(node) {
-			parse_range(node,from,to);
+			XML::parse(node,from,to);
 		}
 
 	};

@@ -41,7 +41,7 @@
 		virtual ~Module() {
 		}
 
-		std::shared_ptr<Udjat::Abstract::Agent> AgentFactory(const pugi::xml_node &node) const override {
+		std::shared_ptr<Udjat::Abstract::Agent> AgentFactory(const Udjat::Abstract::Object UDJAT_UNUSED(&parent), const pugi::xml_node &node) const override {
 			return Udjat::Process::Agent::AgentFactory(node);
 		}
 

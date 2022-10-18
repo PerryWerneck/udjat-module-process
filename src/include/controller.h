@@ -22,6 +22,8 @@
  #include <udjat/defs.h>
  #include <udjat/process/agent.h>
  #include <udjat/process/identifier.h>
+ #include <udjat/tools/handler.h>
+ #include <udjat/tools/timer.h>
  #include <mutex>
  #include <list>
 
@@ -29,7 +31,7 @@
 
 	namespace Process {
 
-		class Controller {
+		class Controller : private MainLoop::Handler, private MainLoop::Timer {
 		private:
 			static std::recursive_mutex guard;
 
@@ -46,8 +48,8 @@
 			/// @brief Update process list.
 			void reload() noexcept;
 
-			/// @brief Netlink socket
-			int sock = -1;
+			void handle_event(const Event event) override;
+			void on_timer() override;
 
 			/// @brief Process identifiers.
 			std::list<Identifier> identifiers;

@@ -20,13 +20,48 @@
  #include <udjat/module.h>
  #include <unistd.h>
  #include <udjat/tools/mainloop.h>
+ #include <udjat/tools/systemservice.h>
  #include <udjat/tools/url.h>
+ #include <udjat/tools/logger.h>
 
  using namespace std;
  using namespace Udjat;
 
  int main(int argc, char **argv) {
 
+	class Service : public SystemService {
+	protected:
+		/// @brief Initialize service.
+		void init() override {
+
+			udjat_module_init();
+
+			SystemService::init();
+
+			if(Module::find("httpd")) {
+				debug("http://localhost:8989");
+			}
+
+		}
+
+		/// @brief Deinitialize service.
+		void deinit() override {
+			cout << Application::Name() << "\t**** Deinitializing" << endl;
+			Udjat::Module::unload();
+		}
+
+	public:
+		Service() : SystemService{"./test.xml"} {
+		}
+
+
+	};
+
+	Service().run(argc,argv);
+
+	cout << "*** Test program finished" << endl;
+
+	/*
 	setlocale( LC_ALL, "" );
 
 	Logger::redirect(true);
@@ -54,6 +89,7 @@
 	cout << "Removing module" << endl;
 	delete module;
 	Module::unload();
+	*/
 
 	return 0;
 }
