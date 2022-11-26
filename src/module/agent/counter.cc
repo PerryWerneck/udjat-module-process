@@ -26,8 +26,7 @@
 	}
 
 	void Process::StateCounterAgent::start() {
-		refresh();
-		super::start();
+		super::start(Process::Controller::getInstance().count(state));
 	}
 
 	bool Process::StateCounterAgent::refresh() {
