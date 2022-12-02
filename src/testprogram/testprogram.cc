@@ -38,10 +38,6 @@
 
 			SystemService::init();
 
-			if(Module::find("httpd")) {
-				debug("http://localhost:8989");
-			}
-
 		}
 
 		/// @brief Deinitialize service.
