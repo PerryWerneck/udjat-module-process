@@ -24,6 +24,7 @@
  #include <sys/stat.h>
  #include <fcntl.h>
  #include <udjat/tools/intl.h>
+ #include <iostream>
 
  using namespace std;
 
