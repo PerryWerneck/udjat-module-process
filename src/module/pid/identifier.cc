@@ -23,6 +23,7 @@
  #include <sys/types.h>
  #include <sys/stat.h>
  #include <fcntl.h>
+ #include <udjat/tools/intl.h>
 
  using namespace std;
 
@@ -31,22 +32,22 @@
 	recursive_mutex Process::Identifier::guard;
 
 	const Process::Identifier::StateName  Process::Identifier::statenames[] = {
-		{ Running,			"Running"		},
-		{ Sleeping,			"Sleeping"		},
-		{ Waiting,			"Waiting"		},
-		{ Zombie,			"Zombie"		},
-		{ Stopped,			"Stopped"		},
-		{ TracingStop,		"Tracing stop"	},
-		{ Paging,			"Paging" 		},
-		{ Dead,				"Dead" 			},
-		{ DeadCompat,		"Dead-compat" 	},
-		{ Wakekill,			"Wakekill" 		},
-		{ Waking,			"Waking" 		},
-		{ Parked,			"Parked" 		},
-		{ Undefined,		nullptr			}
+		{ Running,			N_("Running")		},
+		{ Sleeping,			N_("Sleeping")		},
+		{ Waiting,			N_("Waiting")		},
+		{ Zombie,			N_("Zombie")		},
+		{ Stopped,			N_("Stopped")		},
+		{ TracingStop,		N_("Tracing stop")	},
+		{ Paging,			N_("Paging") 		},
+		{ Dead,				N_("Dead") 			},
+		{ DeadCompat,		N_("Dead-compat") 	},
+		{ Wakekill,			N_("Wakekill") 		},
+		{ Waking,			N_("Waking") 		},
+		{ Parked,			N_("Parked") 		},
+		{ Undefined,		nullptr				}
 	};
 
-	const Process::Identifier::StateName & Process::Identifier::getStateName(const State state) {
+	const Process::Identifier::StateName & Process::Identifier::StateNameFactory(const State state) {
 
 		for(size_t ix = 0; statenames[ix].name; ix++) {
 
@@ -65,7 +66,7 @@
 
 	}
 
-	Process::Identifier::State Process::Identifier::getState(const char *name) {
+	Process::Identifier::State Process::Identifier::StateFactory(const char *name) {
 
 		for(size_t ix = 0; statenames[ix].name; ix++) {
 

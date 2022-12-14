@@ -25,6 +25,7 @@
  #include <fcntl.h>
  #include <udjat/tools/system/stat.h>
  #include <udjat/tools/threadpool.h>
+ #include <iostream>
 
  using namespace std;
 

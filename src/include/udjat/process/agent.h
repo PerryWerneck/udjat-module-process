@@ -21,7 +21,7 @@
 
  #include <udjat/defs.h>
  #include <udjat/agent.h>
- #include <udjat/state.h>
+ #include <udjat/agent/state.h>
  #include <udjat/process/identifier.h>
 
  namespace Udjat {
@@ -60,7 +60,7 @@
 			/// @return true if the identifier match the agent requirements.
 			virtual bool probe(const Identifier &ident) const noexcept;
 
-			std::shared_ptr<Abstract::State> stateFromValue() const override;
+			std::shared_ptr<Abstract::State> computeState() override;
 
 			/// @brief Set process pid.
 			void set(const pid_t pid);
@@ -75,7 +75,7 @@
 
 			void get(const Request &request, Response &response) override;
 
-			bool hasStates() const noexcept override;
+			// bool hasStates() const noexcept override;
 
 			std::shared_ptr<Abstract::State> StateFactory(const pugi::xml_node &node) override;
 

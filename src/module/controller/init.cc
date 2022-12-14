@@ -42,6 +42,7 @@
  #include <udjat/tools/threadpool.h>
  #include <udjat/tools/configuration.h>
  #include <udjat/tools/system/stat.h>
+ #include <udjat/tools/logger.h>
 
  #include <sys/socket.h>
  #include <sys/types.h>
@@ -71,9 +72,9 @@
 
  namespace Udjat {
 
-	Process::Controller::Controller() {
+	Process::Controller::Controller() : Handler(-1,Handler::oninput) {
 
-		cout << "Process controller is starting" << endl;
+		Logger::trace() << "PID Watcher is starting" << endl;
 
 		// Load pids
 		{
@@ -90,8 +91,8 @@
 		// interface device (PF_NETLINK) which is a datagram oriented
 		// service (SOCK_DGRAM). The protocol used is the connector
 		// protocol (NETLINK_CONNECTOR)
-		sock = socket(PF_NETLINK, SOCK_DGRAM, NETLINK_CONNECTOR);
-		if(sock < 0) {
+		fd = socket(PF_NETLINK, SOCK_DGRAM, NETLINK_CONNECTOR);
+		if(fd < 0) {
 
 			clog << "Error '" << strerror (errno) << "' creating netlink socket" << endl;
 
@@ -100,7 +101,7 @@
 			// http://man7.org/linux/man-pages/man7/netlink.7.html
 			// https://github.com/reubenhwk/radvd/blob/master/netlink.c
 			static const int val = 1;
-			if (setsockopt(sock, SOL_NETLINK, NETLINK_NO_ENOBUFS, &val, sizeof(val)) < 0) {
+			if (setsockopt(fd, SOL_NETLINK, NETLINK_NO_ENOBUFS, &val, sizeof(val)) < 0) {
 				clog << "Unable to setsockopt NETLINK_NO_ENOBUFS: " << strerror(errno) << endl;
 			}
 
@@ -114,7 +115,7 @@
 				my_nla.nl_groups = CN_IDX_PROC;
 				my_nla.nl_pid = getpid();
 
-				if(bind(sock, (struct sockaddr *)&my_nla, sizeof(my_nla)) < 0) {
+				if(bind(fd, (struct sockaddr *)&my_nla, sizeof(my_nla)) < 0) {
 					throw std::system_error(errno, std::system_category(), "Can't bind process list connector");
 				}
 
@@ -123,9 +124,7 @@
 				struct cn_msg			* cn_hdr	= (struct cn_msg *)NLMSG_DATA(nl_hdr);
 				enum proc_cn_mcast_op	* mcop_msg	= (enum proc_cn_mcast_op*)&cn_hdr->data[0];
 
-#ifdef DEBUG
-				cout << "sending proc connector: PROC_CN_MCAST_LISTEN" << endl;
-#endif // DEBUG
+				debug("sending proc connector: PROC_CN_MCAST_LISTEN");
 
 				memset(buff, 0, sizeof(buff));
 				*mcop_msg = (proc_cn_mcast_op) PROC_CN_MCAST_LISTEN;
@@ -144,141 +143,17 @@
 				cn_hdr->ack = 0;
 				cn_hdr->len = sizeof(enum proc_cn_mcast_op);
 
-				if(send(sock, nl_hdr, nl_hdr->nlmsg_len, 0) != nl_hdr->nlmsg_len) {
+				if(send(fd, nl_hdr, nl_hdr->nlmsg_len, 0) != nl_hdr->nlmsg_len) {
 					throw std::system_error(errno, std::system_category(), "Failed to send proc connector mcast ctl op");
 				}
 
-				MainLoop::getInstance().insert(this,sock,MainLoop::oninput,[this](const MainLoop::Event &event) {
-					//
-					// Process kernel event
-					//
-					struct sockaddr_nl from_nla;
-					socklen_t from_nla_len;
-					char buff[BUFF_SIZE];
-
-					memset(buff,0,sizeof(buff));
-					memset(&from_nla,0,sizeof(from_nla));
-
-					from_nla.nl_family	= AF_NETLINK;
-					from_nla.nl_groups	= CN_IDX_PROC;
-					from_nla.nl_pid 	= 1;
-					from_nla_len		= sizeof(from_nla);
-
-					ssize_t recv_len = recvfrom(sock, buff, BUFF_SIZE, MSG_DONTWAIT,(struct sockaddr*)&from_nla, &from_nla_len);
-
-					if(recv_len < 0) {
-						cerr << "Error '" << strerror(errno) << "' reading proc connector event" << endl;
-						return true;
-					}
-
-					if(recv_len < 1 || from_nla.nl_pid != 0)
-						return true;
-
-					// Read messages.
-					struct nlmsghdr		* nlh = (struct nlmsghdr*) buff;
-					struct proc_event	* ev;
-					struct cn_msg		* cn_hdr;
-
-					while (NLMSG_OK(nlh, recv_len)) {
-
-						cn_hdr = (struct cn_msg	*) NLMSG_DATA(nlh);
-
-						if (nlh->nlmsg_type == NLMSG_NOOP)
-							continue;
-
-						if ((nlh->nlmsg_type == NLMSG_ERROR) || (nlh->nlmsg_type == NLMSG_OVERRUN))
-							break;
-
-						//
-						// Processa a mensagem recebida.
-						//
-						ev = (struct proc_event *) cn_hdr->data;
-
-						#pragma GCC diagnostic push
-						#pragma GCC diagnostic ignored "-Wswitch"
-						switch(ev->what) {
-						case proc_event::PROC_EVENT_EXEC:
-#ifdef DEBUG
-							cout << "Process '" << ((pid_t) ev->event_data.exec.process_pid) << "' starts" << endl;
-#endif // DEBUG
-							insert((pid_t) ev->event_data.exec.process_pid);
-							break;
-
-						case proc_event::PROC_EVENT_EXIT:
-#ifdef DEBUG
-							cout << "Process '" << ((pid_t) ev->event_data.exec.process_pid) << "' ends" << endl;
-#endif // DEBUG
-							remove((pid_t) ev->event_data.exec.process_pid);
-							break;
-
-#ifdef HAVE_PROC_EVENT_PTRACE
-						// http://lists.openwall.net/netdev/2011/07/12/105
-						case proc_event::PROC_EVENT_PTRACE:
-							cout << "Ptrace detected on PID " << ev->event_data.id.process_pid << endl;
-							break;
-#endif // HAVE_PROC_EVENT_PTRACE
-
-#ifdef HAVE_PROC_EVENT_COREDUMP
-						case proc_event::PROC_EVENT_COREDUMP:
-							cout << "Coredump detected on PID " << ev->event_data.id.process_pid << endl;
-							break;
-#endif // HAVE_PROC_EVENT_COREDUMP
-
-			/*
-						case proc_event::PROC_EVENT_FORK:
-							printf("fork: parent tid=%d pid=%d -> child tid=%d pid=%d\n",
-								nlcn_msg.proc_ev.event_data.fork.parent_pid,
-								nlcn_msg.proc_ev.event_data.fork.parent_tgid,
-								nlcn_msg.proc_ev.event_data.fork.child_pid,
-								nlcn_msg.proc_ev.event_data.fork.child_tgid);
-							break;
-
-						case proc_event::PROC_EVENT_UID:	// UID change
-							printf("uid change: tid=%d pid=%d from %d to %d\n",
-								nlcn_msg.proc_ev.event_data.id.process_pid,
-								nlcn_msg.proc_ev.event_data.id.process_tgid,
-								nlcn_msg.proc_ev.event_data.id.r.ruid,
-								nlcn_msg.proc_ev.event_data.id.e.euid);
-                        	break;
-
-						case proc_event::PROC_EVENT_NONE:
-							break;
-
-						case proc_event::PROC_EVENT_GID:	// GID change
-							printf("gid change: tid=%d pid=%d from %d to %d\n",
-								nlcn_msg.proc_ev.event_data.id.process_pid,
-								nlcn_msg.proc_ev.event_data.id.process_tgid,
-								nlcn_msg.proc_ev.event_data.id.r.rgid,
-								nlcn_msg.proc_ev.event_data.id.e.egid);
-							break;
-
-						case proc_event::PROC_EVENT_SID:
-						break;
-
-						case proc_event::PROC_EVENT_COMM:
-							break;
-
-			*/
-						}
-						#pragma GCC diagnostic pop
-
-						// More?
-						if (nlh->nlmsg_type == NLMSG_DONE)
-							break;
-
-						nlh = NLMSG_NEXT(nlh, recv_len);
-					}
-
-					return true;
-				});
-
-				cout << "Process watcher is active" << endl;
+				MainLoop::Handler::enable();
+				Logger::trace() << "PID Watcher is active" << endl;
 
 			} catch(const exception &e) {
 
 				clog << e.what() << endl;
-				::close(sock);
-				sock = -1;
+				close();
 
 			}
 
@@ -288,33 +163,7 @@
 		update.cpu_use_per_process = Config::Value<bool>("cpu","get-by-pid",true);
 
 		// Starting data colecting timer.
-		MainLoop::getInstance().insert(this,Config::Value<unsigned long>("cpu","update-timer",10000).get(),[this](){
-			if(sock < 0) {
-
-				// No kernel watcher, update from /proc.
-				try {
-
-					reload();
-
-				} catch(const exception &e) {
-
-					cerr << "Error '" << e.what() << "' updating process list" << endl;
-
-				} catch(...) {
-
-					cerr << "Unexpected error updating process list" << endl;
-
-				}
-
-			}
-
-			ThreadPool::getInstance().push([this]() {
-				refresh();
-			});
-
-			return true;
-
-		});
+		MainLoop::Timer::enable(Config::Value<unsigned long>("cpu","update-timer",10000).get());
 
 		// Do the first read.
 		ThreadPool::getInstance().push([this]() {
@@ -331,13 +180,154 @@
 	}
 
 	Process::Controller::~Controller() {
-		cout << "Process controller is stopping" << endl;
-		MainLoop::getInstance().remove(this);
+		Logger::trace() << "PID watcher is stopping" << endl;
+		close();
+	}
 
+	void Process::Controller::on_timer() {
 
-		if(sock > 0) {
-			::close(sock);
+		if(fd < 0) {
+
+			// No kernel watcher, update from /proc.
+			try {
+
+				reload();
+
+			} catch(const exception &e) {
+
+				cerr << "Error '" << e.what() << "' updating process list" << endl;
+
+			} catch(...) {
+
+				cerr << "Unexpected error updating process list" << endl;
+
+			}
+
 		}
+
+		ThreadPool::getInstance().push([this]() {
+			refresh();
+		});
+
+	}
+
+	void Process::Controller::handle_event(const Event UDJAT_UNUSED(event)) {
+		//
+		// Process kernel event
+		//
+		struct sockaddr_nl from_nla;
+		socklen_t from_nla_len;
+		char buff[BUFF_SIZE];
+
+		memset(buff,0,sizeof(buff));
+		memset(&from_nla,0,sizeof(from_nla));
+
+		from_nla.nl_family	= AF_NETLINK;
+		from_nla.nl_groups	= CN_IDX_PROC;
+		from_nla.nl_pid 	= 1;
+		from_nla_len		= sizeof(from_nla);
+
+		ssize_t recv_len = recvfrom(fd, buff, BUFF_SIZE, MSG_DONTWAIT,(struct sockaddr*)&from_nla, &from_nla_len);
+
+		if(recv_len < 0) {
+			cerr << "Error '" << strerror(errno) << "' reading proc connector event" << endl;
+			return;
+		}
+
+		if(recv_len < 1 || from_nla.nl_pid != 0)
+			return;
+
+		// Read messages.
+		struct nlmsghdr		* nlh = (struct nlmsghdr*) buff;
+		struct proc_event	* ev;
+		struct cn_msg		* cn_hdr;
+
+		while (NLMSG_OK(nlh, recv_len)) {
+
+			cn_hdr = (struct cn_msg	*) NLMSG_DATA(nlh);
+
+			if (nlh->nlmsg_type == NLMSG_NOOP)
+				continue;
+
+			if ((nlh->nlmsg_type == NLMSG_ERROR) || (nlh->nlmsg_type == NLMSG_OVERRUN))
+				break;
+
+			//
+			// Processa a mensagem recebida.
+			//
+			ev = (struct proc_event *) cn_hdr->data;
+
+			#pragma GCC diagnostic push
+			#pragma GCC diagnostic ignored "-Wswitch"
+			switch(ev->what) {
+			case proc_event::PROC_EVENT_EXEC:
+				debug("Process '",((pid_t) ev->event_data.exec.process_pid),"' starts");
+				insert((pid_t) ev->event_data.exec.process_pid);
+				break;
+
+			case proc_event::PROC_EVENT_EXIT:
+				debug("Process '",((pid_t) ev->event_data.exec.process_pid),"' ends");
+				remove((pid_t) ev->event_data.exec.process_pid);
+				break;
+
+#ifdef HAVE_PROC_EVENT_PTRACE
+			// http://lists.openwall.net/netdev/2011/07/12/105
+			case proc_event::PROC_EVENT_PTRACE:
+				debug("Ptrace detected on PID ",((pid_t),ev->event_data.id.process_pid));
+				break;
+#endif // HAVE_PROC_EVENT_PTRACE
+
+#ifdef HAVE_PROC_EVENT_COREDUMP
+			case proc_event::PROC_EVENT_COREDUMP:
+				debug("Coredump detected on PID ",((pid_t) ev->event_data.id.process_pid));
+				break;
+#endif // HAVE_PROC_EVENT_COREDUMP
+
+/*
+			case proc_event::PROC_EVENT_FORK:
+				printf("fork: parent tid=%d pid=%d -> child tid=%d pid=%d\n",
+					nlcn_msg.proc_ev.event_data.fork.parent_pid,
+					nlcn_msg.proc_ev.event_data.fork.parent_tgid,
+					nlcn_msg.proc_ev.event_data.fork.child_pid,
+					nlcn_msg.proc_ev.event_data.fork.child_tgid);
+				break;
+
+			case proc_event::PROC_EVENT_UID:	// UID change
+				printf("uid change: tid=%d pid=%d from %d to %d\n",
+					nlcn_msg.proc_ev.event_data.id.process_pid,
+					nlcn_msg.proc_ev.event_data.id.process_tgid,
+					nlcn_msg.proc_ev.event_data.id.r.ruid,
+					nlcn_msg.proc_ev.event_data.id.e.euid);
+				break;
+
+			case proc_event::PROC_EVENT_NONE:
+				break;
+
+			case proc_event::PROC_EVENT_GID:	// GID change
+				printf("gid change: tid=%d pid=%d from %d to %d\n",
+					nlcn_msg.proc_ev.event_data.id.process_pid,
+					nlcn_msg.proc_ev.event_data.id.process_tgid,
+					nlcn_msg.proc_ev.event_data.id.r.rgid,
+					nlcn_msg.proc_ev.event_data.id.e.egid);
+				break;
+
+			case proc_event::PROC_EVENT_SID:
+			break;
+
+			case proc_event::PROC_EVENT_COMM:
+				break;
+
+*/
+			}
+			#pragma GCC diagnostic pop
+
+			// More?
+			if (nlh->nlmsg_type == NLMSG_DONE)
+				break;
+
+			nlh = NLMSG_NEXT(nlh, recv_len);
+		}
+
 	}
 
  }

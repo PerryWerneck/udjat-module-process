@@ -56,8 +56,8 @@
 				const char *name;
 			} statenames[];
 
-			static const StateName & getStateName(const State state);
-			static State getState(const char *name);
+			static const StateName & StateNameFactory(const State state);
+			static State StateFactory(const char *name);
 
 		private:
 

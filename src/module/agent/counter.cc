@@ -22,13 +22,11 @@
 
  namespace Udjat {
 
-	Process::StateCounterAgent::StateCounterAgent(const char *statename, const pugi::xml_node &node) : Udjat::Agent<unsigned int>(node), state(Process::Identifier::getState(statename)) {
-		load(node);
+	Process::StateCounterAgent::StateCounterAgent(const char *statename, const pugi::xml_node &node) : Udjat::Agent<unsigned int>(node), state(Process::Identifier::StateFactory(statename)) {
 	}
 
 	void Process::StateCounterAgent::start() {
-		refresh();
-		super::start();
+		super::start(Process::Controller::getInstance().count(state));
 	}
 
 	bool Process::StateCounterAgent::refresh() {
